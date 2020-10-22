@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import WikiApi from './WikiApi';
 import Item from './Item';
+import Mora from './Mora';
 
 const clamp = (value, min, max) => Math.max(Math.min(value, max), min);
 
@@ -19,6 +20,9 @@ export default ({ character }) => {
 					else totals[key][a[key].name].count += a[key].count;
 				}
 			});
+
+			if (!totals.mora) totals.mora = a.mora;
+			else totals.mora += a.mora;
 		}
 	});
 
@@ -51,6 +55,7 @@ export default ({ character }) => {
 						<Item item={a.ele2} />
 						<Item item={a.local} />
 						<Item item={a.common} />
+						<Mora amount={a.mora} />
 					</div>)}
 				</div>
 			</div>
@@ -62,6 +67,7 @@ export default ({ character }) => {
 					...Object.values(totals.local),
 					...Object.values(totals.common)].map(item =>
 					<Item item={item} />)}
+					<Mora amount={totals.mora} />
 				</div>
 			</div>
 		</div>
