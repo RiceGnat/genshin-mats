@@ -1,0 +1,51 @@
+html, body {
+  height: 100%;
+  padding: 0; 
+  margin: 0;
+}
+
+body {
+  font-size: 16px;
+  padding: 0 1em;
+}
+
+.controls {
+  select, input {
+    margin-right: 0.5em;
+  }
+}
+
+.row {
+  margin: 0.5em 0;
+}
+
+.char {
+  margin-right: 1em;
+  margin-bottom: 1.5em;
+
+  .thumb {
+    margin-right: 1em;
+  }
+
+  .ascension input[type=number] {
+    width: 53px;
+  }
+
+  .inactive {
+    opacity: 0.2;
+  }
+
+  .total {
+    flex-wrap: wrap;
+    max-width: 25em;
+    padding: 0 1em;
+  }
+}
+
+.item {
+  width: 5em;
+
+  img {
+    vertical-align: top;
+  }
+}
