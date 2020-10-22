@@ -1,30 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import WikiApi from './WikiApi';
 import Item from './Item';
 import Mora from './Mora';
+import { getAscensionTotals } from './Util';
 
 const clamp = (value, min, max) => Math.max(Math.min(value, max), min);
 
-export default ({ character }) => {
-	const [current, setCurrent] = useState(0);
-	const [target, setTarget] = useState(6);
+export default ({ character, onBoundsChanged }) => {
+	const current = character.bounds.current;
+	const target = character.bounds.target;
 
-	const totals = {};
-
-	character.ascension.forEach((a, i) => {
-		if (i >= current && i < target) {
-			['ele1', 'ele2', 'local', 'common'].forEach(key => {
-				if (!totals[key]) totals[key] = {};
-				if (a[key] !== null) {
-					if (!totals[key][a[key].name]) totals[key][a[key].name] = { ...a[key] };
-					else totals[key][a[key].name].count += a[key].count;
-				}
-			});
-
-			if (!totals.mora) totals.mora = a.mora;
-			else totals.mora += a.mora;
-		}
-	});
+	const totals = getAscensionTotals(character.ascension.filter((_, i) => i >= current && i < target));
 
 	return (
 		<div className="char">
@@ -39,13 +25,11 @@ export default ({ character }) => {
 					<div className="ascension">
 						<input type="number" value={current} onChange={e => {
 							const value = clamp(e.target.value, 0, 5);
-							setCurrent(value);
-							setTarget(Math.max(value + 1, target));
+							onBoundsChanged(value, Math.max(value + 1, target));
 						}} />
 						<input type="number" value={target} onChange={e => {
 							const value = clamp(e.target.value, 1, 6);
-							setTarget(value);
-							setCurrent(Math.min(value - 1, current));
+							onBoundsChanged(Math.min(value - 1, current), value);
 						}} />
 					</div>
 				</div>
@@ -66,7 +50,7 @@ export default ({ character }) => {
 					...Object.values(totals.ele2),
 					...Object.values(totals.local),
 					...Object.values(totals.common)].map(item =>
-					<Item item={item} />)}
+					<Item key={item.name} item={item} />)}
 					<Mora amount={totals.mora} />
 				</div>
 			</div>

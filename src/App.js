@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import './App.scss';
 import WikiApi from './WikiApi';
 import CharacterMats from './CharacterMats';
+import Item from './Item';
+import Mora from './Mora';
+import { getAscensionTotals } from './Util';
 
 const parseAscension = wikitext => {
 	const mats = {};
@@ -101,23 +104,50 @@ export default class extends Component {
 			if (char) {
 				list.push({
 					...char,
-					ascension: getAscensionLevels(char.ascension)
+					ascension: getAscensionLevels(char.ascension),
+					bounds: { current: 0, target: 6}
 				});
 				this.setState({ list });
 			}
 		}
 	}
 
-	render = () =>
-		<div className="container">
-			<div className="controls row">
-				<select id="character" onChange={e => this.setState({ selectedCharacter: e.target.value })}>
-					{this.state.names.map(name => <option key={name}>{name}</option>)}
-				</select>
-				<input type="button" id="addCharacter" value="Add" onClick={this.addCharacter} />
+	render = () => {
+		const totals = getAscensionTotals(this.state.list
+			.map(char => char.ascension.filter((_, i) => i >= char.bounds.current && i < char.bounds.target))
+			.flat());
+
+		return (
+			<div className="container">
+				<div className="controls row">
+					<select id="character" onChange={e => this.setState({ selectedCharacter: e.target.value })}>
+						{this.state.names.map(name => <option key={name}>{name}</option>)}
+					</select>
+					<input type="button" id="addCharacter" value="Add" onClick={this.addCharacter} />
+				</div>
+				<div className="list row flex">
+					{this.state.list.map((char, i) =>
+						<CharacterMats key={char.name} character={char}
+							onBoundsChanged={(current, target) => {
+								const list = this.state.list;
+								list[i] = { ...char, bounds: { current, target } };
+								this.setState({ list });
+							}} />)}
+				</div>
+				{this.state.list.length > 1 && 
+					<div className="row">
+						<h4>Total mats for all characters</h4>
+						<div className="flex total">{[
+							...Object.values(totals.ele1),
+							...Object.values(totals.ele2),
+							...Object.values(totals.local),
+							...Object.values(totals.common)].map(item =>
+							<Item key={item.name} item={item} />)}
+							<Mora amount={totals.mora} />
+						</div>
+					</div>
+				}
 			</div>
-			<div className="list flex row">
-				{this.state.list.map(char => <CharacterMats key={char.name} character={char} />)}
-			</div>
-		</div>;
+		);
+	}
 }

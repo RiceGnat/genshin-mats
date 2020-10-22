@@ -26,8 +26,13 @@ body {
   flex-wrap: wrap;
 }
 
+.total {
+  flex-wrap: wrap;
+  padding: 0 1em;
+}
+
 .char {
-  margin-right: 1em;
+  margin-right: 5em;
   margin-bottom: 1.5em;
 
   .thumb {
@@ -43,14 +48,13 @@ body {
   }
 
   .total {
-    flex-wrap: wrap;
     max-width: 32em;
-    padding: 0 1em;
   }
 }
 
 .item {
   width: 5em;
+  white-space: nowrap;
 
   img {
     vertical-align: top;
