@@ -28,35 +28,35 @@ const getAscensionLevels = data => {
 		),
 		ascension(
 			item(`${data.ele1} Fragment`, 3),
-			item(`${data.ele2}`, 2),
+			data.ele2 && item(`${data.ele2}`, 2),
 			item(`${data.local}`, 10),
 			item(`${data.common1}`, 15),
 			40000
 		),
 		ascension(
 			item(`${data.ele1} Fragment`, 6),
-			item(`${data.ele2}`, 4),
+			data.ele2 && item(`${data.ele2}`, 4),
 			item(`${data.local}`, 20),
 			item(`${data.common2}`, 12),
 			60000
 		),
 		ascension(
 			item(`${data.ele1} Chunk`, 3),
-			item(`${data.ele2}`, 8),
+			data.ele2 && item(`${data.ele2}`, 8),
 			item(`${data.local}`, 30),
 			item(`${data.common2}`, 18),
 			80000
 		),
 		ascension(
 			item(`${data.ele1} Chunk`, 6),
-			item(`${data.ele2}`, 12),
+			data.ele2 && item(`${data.ele2}`, 12),
 			item(`${data.local}`, 45),
 			item(`${data.common3}`, 12),
 			100000
 		),
 		ascension(
 			item(`${data.ele1} Gemstone`, 6),
-			item(`${data.ele2}`, 20),
+			data.ele2 && item(`${data.ele2}`, 20),
 			item(`${data.local}`, 60),
 			item(`${data.common3}`, 24),
 			120000

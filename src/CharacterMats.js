@@ -21,6 +21,7 @@ export default ({ character, onBoundsChanged, onDelete }) => {
 					<img className="thumb"
 						src={WikiApi.file(`Character_${character.name}_Thumb.png`)}
 						alt={character.name}
+						title={character.name}
 						width={106}
 						height={106} />
 					<div className="ascension">
