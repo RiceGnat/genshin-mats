@@ -118,7 +118,7 @@ export default class extends Component {
 			.flat());
 
 		return (
-			<div className="container">
+			<div className="main container">
 				<div className="controls row">
 					<select id="character" onChange={e => this.setState({ selectedCharacter: e.target.value })}>
 						{this.state.names.map(name => <option key={name}>{name}</option>)}
