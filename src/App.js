@@ -11,7 +11,7 @@ const parseAscension = wikitext => {
 	wikitext.match(/\{\{Character Ascension Materials\s*\|(.+?)\}\}/s)[1]
 		.split('|')
 		.map(mat => mat.split('='))
-		.forEach(o => mats[o[0]] = o[1].trim());
+		.forEach(o => mats[o[0].trim()] = o[1].trim());
 	return mats;
 }
 
