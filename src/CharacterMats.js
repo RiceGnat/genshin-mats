@@ -6,14 +6,15 @@ import { getAscensionTotals } from './Util';
 
 const clamp = (value, min, max) => Math.max(Math.min(value, max), min);
 
-export default ({ character, onBoundsChanged }) => {
+export default ({ character, onBoundsChanged, onDelete }) => {
 	const current = character.bounds.current;
 	const target = character.bounds.target;
 
 	const totals = getAscensionTotals(character.ascension.filter((_, i) => i >= current && i < target));
 
 	return (
-		<div className="char">
+		<div className="char container">
+			<input type="button" className="delete-btn" value="&#215;" onClick={() => onDelete()} />
 			<h4>{character.name}</h4>
 			<div className="flex row">
 				<div>

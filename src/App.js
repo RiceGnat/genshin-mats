@@ -132,6 +132,11 @@ export default class extends Component {
 								const list = this.state.list;
 								list[i] = { ...char, bounds: { current, target } };
 								this.setState({ list });
+							}}
+							onDelete={() => {
+								const list = this.state.list;
+								list.splice(i, 1);
+								this.setState({ list });
 							}} />)}
 				</div>
 				{this.state.list.length > 1 && 
