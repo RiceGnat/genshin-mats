@@ -96,6 +96,7 @@ input:focus {
     height: 30px;
     vertical-align: top;
     object-fit: contain;
+    image-rendering: -webkit-optimize-contrast;
   }
 }
 
