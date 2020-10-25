@@ -13,7 +13,6 @@ import {
 import ItemList from './ItemList';
 
 const defaultSettings = {
-	showTalents: true,
 	darkMode: false
 };
 
@@ -161,11 +160,6 @@ export default class extends Component {
 					<div>
 						<h4>Settings</h4>
 						<span className="checkbox">
-							<input type="checkbox" id="showTalents" checked={this.state.settings.showTalents}
-								onChange={e => this.updateSetting({ showTalents: e.target.checked })} />
-							<label htmlFor="showTalents"><span className="check large"></span>Show talents</label>
-						</span>
-						<span className="checkbox">
 							<input type="checkbox" id="darkMode" checked={this.state.settings.darkMode}
 								onChange={e => this.updateSetting({ darkMode: e.target.checked })} />
 							<label htmlFor="darkMode"><span className="check large"></span>Dark mode</label>
@@ -176,7 +170,7 @@ export default class extends Component {
 				</div>
 				<div className="list row flex">
 					{this.state.list.map((char, i) =>
-						<CharacterMats key={char.name} type={char.type} character={char} showTalents={this.state.settings.showTalents}
+						<CharacterMats key={char.name} type={char.type} character={char}
 							onBoundsChanged={(key, current, target) => {
 								const list = this.state.list;
 								const bounds = key === 'talents' ? {
