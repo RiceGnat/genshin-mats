@@ -20,6 +20,10 @@ img {
   select, input {
     margin-right: 0.5em;
   }
+
+  & > div {
+    margin-right: 3.5em;
+  }
 }
 
 .row {
@@ -46,7 +50,7 @@ img {
 .total {
   flex-wrap: wrap;
   padding-bottom: 1.5em;
-  width: 32em;
+  width: 64em;
 }
 
 .char {
@@ -83,6 +87,15 @@ img {
 
   .thumb {
     margin-right: 1em;
+  }
+
+  .char_image {
+    width: 106px;
+    height: 106px;
+  }
+
+  .rarity {
+    text-align: center;
   }
 
   input[type=number] {
@@ -127,6 +140,10 @@ img {
     input {
       margin: 0.25em 0 2em;
     }
+  }
+
+  .total {
+    width: 32em;
   }
 }
 

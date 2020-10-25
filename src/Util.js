@@ -1,35 +1,46 @@
-export const parseAscensionMats = wikitext => {
-	const mats = {};
-	wikitext.match(/\{\{Character Ascension Materials\s*\|(.+?)\}\}/s)[1]
-		.split('|')
-		.map(mat => mat.split('='))
-		.forEach(o => mats[o[0].trim()] = o[1].trim());
-	return mats;
-}
+export const splitArray = (array, chunkSize) => Array(Math.ceil(array.length / chunkSize)).fill().map((_, index) => index * chunkSize).map(begin => array.slice(begin, begin + chunkSize));
 
-export const parseTalentMats = wikitext => {
-    const mats = {};
+const extractWikiTemplateParams = (wikitext, regex) => {
+    const params = {};
     try {
-        wikitext.match(/\{\{Talent Leveling Table\s*\|(.+?)\}\}/s)[1]
+        wikitext.match(regex)[1]
             .split('|')
-            .map(mat => mat.split('='))
-            .forEach(o => mats[o[0].trim()] = o[1].trim());
+            .map(param => param.split('='))
+            .filter(tokens => tokens.length === 2)
+            .forEach(o => params[o[0].trim()] = o[1].trim());
     } finally {
-        return mats;
+        return params;
     }
 }
 
-export const parseTalentNames = wikitext => {
-    const names = {};
-    try {
-        wikitext.match(/\{\{Talents Table\s*\|(.+?)\}\}/s)[1]
-            .split('|')
-            .map(talent => talent.split('='))
-            .forEach(o => names[o[0].trim()] = o[1].trim());
-    } finally {
-        return names;
+export const parseCharacterDetails = wikitext => {
+    const params = extractWikiTemplateParams(wikitext, /\{\{Character Infobox\s*\|(.+?)\}\}/s);
+    return {
+        rarity: parseInt(params.rarity)
     }
 }
+
+export const parseAscensionMats = wikitext =>
+    extractWikiTemplateParams(wikitext, /\{\{Character Ascension Materials\s*\|(.+?)\}\}/s);
+
+export const parseTalentMats = wikitext => 
+    extractWikiTemplateParams(wikitext, /\{\{Talent Leveling Table\s*\|(.+?)\}\}/s);
+
+export const parseTalentNames = wikitext => 
+    extractWikiTemplateParams(wikitext, /\{\{Talents Table\s*\|(.+?)\}\}/s);
+
+export const parseWeaponTable = wikitext => 
+    wikitext.replace(/\n/g, '').replace(/\{\|/g, '').replace(/\|\}/g, '').split('|-|').slice(1).map(row => row.split('|').pop());
+    
+export const parseWeaponDetails = wikitext => {
+    const params = extractWikiTemplateParams(wikitext, /\{\{Weapon Infobox\s*\|(.+?)\}\}/s);
+    return {
+        rarity: parseInt(params.rarity)
+    }
+}
+
+export const parseWeaponMats = wikitext =>
+    extractWikiTemplateParams(wikitext, /\{\{Weapon Ascension Materials\s*\|(.+?)\}\}/s); 
 
 const item = (name, count) => ({ name, count });
 
@@ -141,8 +152,133 @@ export const getTalentLevels = data => {
     ];
 }
 
+export const getWeaponAscensionLevels = (data, rarity) => {
+    const ascension = (weapon, boss, common, mora) => ({ weapon, boss, common, mora });
+    
+    switch (rarity) {
+        case 5:
+            return [
+                ascension(
+                    item(data.ascendMat1, 5),
+                    item(data.bossMat1, 5),
+                    item(data.commonMat1, 3),
+                    10000
+                ),
+                ascension(
+                    item(data.ascendMat2, 5),
+                    item(data.bossMat1, 18),
+                    item(data.commonMat1, 12),
+                    20000
+                ),
+                ascension(
+                    item(data.ascendMat2, 9),
+                    item(data.bossMat2, 9),
+                    item(data.commonMat2, 9),
+                    30000
+                ),
+                ascension(
+                    item(data.ascendMat3, 5),
+                    item(data.bossMat2, 18),
+                    item(data.commonMat2, 14),
+                    45000
+                ),
+                ascension(
+                    item(data.ascendMat3, 9),
+                    item(data.bossMat3, 14),
+                    item(data.commonMat3, 9),
+                    55000
+                ),
+                ascension(
+                    item(data.ascendMat4, 6),
+                    item(data.bossMat3, 27),
+                    item(data.commonMat3, 18),
+                    undefined
+                )
+            ];
+        case 4:
+            return [
+                ascension(
+                    item(data.ascendMat1, 3),
+                    item(data.bossMat1, 3),
+                    item(data.commonMat1, 2),
+                    5000
+                ),
+                ascension(
+                    item(data.ascendMat2, 3),
+                    item(data.bossMat1, 12),
+                    item(data.commonMat1, 8),
+                    15000
+                ),
+                ascension(
+                    item(data.ascendMat2, 6),
+                    item(data.bossMat2, 6),
+                    item(data.commonMat2, 6),
+                    20000
+                ),
+                ascension(
+                    item(data.ascendMat3, 3),
+                    item(data.bossMat2, 12),
+                    item(data.commonMat2, 9),
+                    30000
+                ),
+                ascension(
+                    item(data.ascendMat3, 6),
+                    item(data.bossMat3, 9),
+                    item(data.commonMat3, 6),
+                    35000
+                ),
+                ascension(
+                    item(data.ascendMat4, 4),
+                    item(data.bossMat3, 18),
+                    item(data.commonMat3, 12),
+                    45000
+                )
+            ];
+        case 3:
+            return [
+                ascension(
+                    item(data.ascendMat1, 2),
+                    item(data.bossMat1, 2),
+                    item(data.commonMat1, 1),
+                    5000
+                ),
+                ascension(
+                    item(data.ascendMat2, 2),
+                    item(data.bossMat1, 8),
+                    item(data.commonMat1, 5),
+                    10000
+                ),
+                ascension(
+                    item(data.ascendMat2, 4),
+                    item(data.bossMat2, 4),
+                    item(data.commonMat2, 4),
+                    15000
+                ),
+                ascension(
+                    item(data.ascendMat3, 2),
+                    item(data.bossMat2, 8),
+                    item(data.commonMat2, 8),
+                    20000
+                ),
+                ascension(
+                    item(data.ascendMat3, 4),
+                    item(data.bossMat3, 6),
+                    item(data.commonMat3, 4),
+                    25000
+                ),
+                ascension(
+                    item(data.ascendMat4, 3),
+                    item(data.bossMat3, 12),
+                    item(data.commonMat3, 8),
+                    undefined
+                )
+            ];
+        default: return [];
+    }
+}
+
 export const getAscensionTotals = array => {
-    const fields = ['ele1', 'ele2', 'local', 'common', 'talent', 'weekly'];
+    const fields = ['ele1', 'ele2', 'local', 'common', 'boss', 'talent', 'weapon', 'weekly'];
     const totals = { mora: 0 };
     fields.forEach(key => totals[key] = {});
 

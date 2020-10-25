@@ -3,12 +3,10 @@ import './App.scss';
 import WikiApi from './WikiApi';
 import CharacterMats from './CharacterMats';
 import {
-	parseAscensionMats,
-	parseTalentMats,
-	parseTalentNames,
 	getAscensionLevels,
 	getAscensionTotals,
-	getTalentLevels
+	getTalentLevels,
+	getWeaponAscensionLevels
 } from './Util';
 import ItemList from './ItemList';
 
@@ -18,34 +16,28 @@ export default class extends Component {
 
 		this.state = {
 			characters: [],
-			names: [],
+			characterNames: [],
 			selectedCharacter: '',
+			weapons: [],
+			weaponNames: [],
+			selectedWeapon: '',
 			list: []
 		};
 	}
 
 	componentDidMount = async () => {
-		const characters = await WikiApi.get(`list=categorymembers&cmtitle=Category:Playable_Characters&cmlimit=max`)
-			.then(data => data.query.categorymembers
-				.filter(({ ns }) => ns === 0)
-				.map(({ title }) => title))
-			.then(characters => WikiApi.get(`prop=revisions&rvslots=main&rvprop=content&titles=${characters.join('|')}`)
-				.then(data => Object.values(data.query.pages).map(page => {
-					const wikitext = page.revisions[0].slots.main['*'];
-					return {
-						name: page.title,
-						ascensions: parseAscensionMats(wikitext),
-						talents: parseTalentMats(wikitext),
-						talentNames: parseTalentNames(wikitext)
-					};
-				})));
-
-		const names = characters.map(({ name }) => name).sort();
+		const characters = await WikiApi.getCharacters();
+		const characterNames = characters.map(({ name }) => name).sort();
+		const weapons = await WikiApi.getWeapons();
+		const weaponNames = weapons.map(({ name }) => name).sort();
 
 		this.setState({
 			characters,
-			names,
-			selectedCharacter: names[0]
+			characterNames,
+			selectedCharacter: characterNames[0],
+			weapons,
+			weaponNames,
+			selectedWeapon: weaponNames[0]
 		});
 	}
 
@@ -56,6 +48,7 @@ export default class extends Component {
 			const char = this.state.characters.find(({ name }) => name === selected);
 			if (char) {
 				list.push({
+					type: 'character',
 					...char,
 					ascensions: getAscensionLevels(char.ascensions),
 					talents: getTalentLevels(char.talents),
@@ -64,6 +57,26 @@ export default class extends Component {
 						attack: { current: 1, target: 1 },
 						skill: { current: 1, target: 1 },
 						burst: { current: 1, target: 1 }
+					}
+				});
+				this.setState({ list });
+			}
+		}
+	}
+
+	addWeapon = () => {
+		const list = this.state.list;
+		const selected = this.state.selectedWeapon;
+		if (!list.find(({ name }) => name === selected)) {
+			const weapon = this.state.weapons.find(({ name }) => name === selected);
+			if (weapon) {
+				list.push({
+					type: 'weapon',
+					...weapon,
+					ascensions: getWeaponAscensionLevels(weapon.ascensions, weapon.rarity),
+					talents: [],
+					bounds: {
+						ascension: { current: 0, target: 6 }
 					}
 				});
 				this.setState({ list });
@@ -81,15 +94,25 @@ export default class extends Component {
 
 		return (
 			<div className="main container">
-				<div className="controls row">
-					<select id="character" onChange={e => this.setState({ selectedCharacter: e.target.value })}>
-						{this.state.names.map(name => <option key={name}>{name}</option>)}
-					</select>
-					<input type="button" id="addCharacter" value="Add" onClick={this.addCharacter} />
+				<div className="controls row flex">
+					<div>
+						<h4>Characters</h4>
+						<select onChange={e => this.setState({ selectedCharacter: e.target.value })}>
+							{this.state.characterNames.map(name => <option key={name}>{name}</option>)}
+						</select>
+						<input type="button" value="Add" onClick={this.addCharacter} />
+					</div>
+					<div>
+						<h4>Weapons</h4>
+						<select onChange={e => this.setState({ selectedWeapon: e.target.value })}>
+							{this.state.weaponNames.map(name => <option key={name}>{name}</option>)}
+						</select>
+						<input type="button" value="Add" onClick={this.addWeapon} />
+					</div>
 				</div>
 				<div className="list row flex">
 					{this.state.list.map((char, i) =>
-						<CharacterMats key={char.name} character={char}
+						<CharacterMats key={char.name} type={char.type} character={char}
 							onBoundsChanged={(key, current, target) => {
 								const list = this.state.list;
 								const bounds = key === 'talents' ? {
@@ -115,13 +138,15 @@ export default class extends Component {
 				</div>
 				{this.state.list.length > 1 && 
 					<div className="row">
-						<h4>Total mats for all characters</h4>
+						<h4>Total mats for all {this.state.list.map(({ type }) => `${type}s`).filter((value, index, self) => self.indexOf(value) === index).sort().join(' and ')}</h4>
 						<ItemList className="flex total" mora={totals.mora} items={[
 							...Object.values(totals.ele1),
 							...Object.values(totals.ele2),
 							...Object.values(totals.local),
 							...Object.values(totals.common),
+							...Object.values(totals.boss),
 							...Object.values(totals.talent),
+							...Object.values(totals.weapon),
 							...Object.values(totals.weekly)]} />
 					</div>
 				}
