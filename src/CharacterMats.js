@@ -1,7 +1,7 @@
 import React, { useState, Fragment } from 'react';
 import WikiApi from './WikiApi';
 import ItemList from './ItemList';
-import { getAscensionTotals } from './Util';
+import { checkBounds, checkBoundsOffset, getAscensionTotals } from './Util';
 
 const clamp = (value, min, max) => Math.max(Math.min(value, max), min);
 
@@ -26,9 +26,6 @@ export default ({ type, character, onBoundsChanged, onDelete }) => {
 	};
 
 	const bounds = character.bounds;
-
-	const checkBounds = ({ current, target }, i) => i >= current && i < target;
-	const checkBoundsOffset = ({ current, target }, i) => checkBounds({ current: current - 1, target: target - 1 }, i);
 
 	const totals = getAscensionTotals(character.ascensions.filter((_, i) => checkBounds(bounds.ascension, i))
 		.concat(talentKeys.map(key => character.talents.filter((_, i) => checkBoundsOffset(bounds[key], i))).flat()));

@@ -4,9 +4,11 @@ import WikiApi from './WikiApi';
 import CharacterMats from './CharacterMats';
 import {
 	getAscensionLevels,
-	getAscensionTotals,
 	getTalentLevels,
-	getWeaponAscensionLevels
+	getWeaponAscensionLevels,
+	checkBounds,
+	checkBoundsOffset,
+	getAscensionTotals,
 } from './Util';
 import ItemList from './ItemList';
 
@@ -86,10 +88,10 @@ export default class extends Component {
 
 	render = () => {
 		const totals = getAscensionTotals(this.state.list
-			.map(char => char.ascensions.filter((_, i) => i >= char.bounds.ascension.current && i < char.bounds.ascension.target)
-				.concat(char.talents.filter((_, i) => i >= char.bounds.attack.current - 1 && i < char.bounds.attack.target))
-				.concat(char.talents.filter((_, i) => i >= char.bounds.skill.current - 1 && i < char.bounds.skill.target))
-				.concat(char.talents.filter((_, i) => i >= char.bounds.burst.current - 1 && i < char.bounds.burst.target)))
+			.map(char => char.ascensions.filter((_, i) => checkBounds(char.bounds.ascension, i))
+				.concat(char.talents.filter((_, i) => checkBoundsOffset(char.bounds.attack, i)))
+				.concat(char.talents.filter((_, i) => checkBoundsOffset(char.bounds.skill, i)))
+				.concat(char.talents.filter((_, i) => checkBoundsOffset(char.bounds.burst, i))))
 			.flat());
 
 		return (

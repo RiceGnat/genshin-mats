@@ -277,6 +277,10 @@ export const getWeaponAscensionLevels = (data, rarity) => {
     }
 }
 
+export const checkBounds = ({ current, target }, i) => i >= current && i < target;
+
+export const checkBoundsOffset = ({ current, target }, i) => checkBounds({ current: current - 1, target: target - 1 }, i);
+
 export const getAscensionTotals = array => {
     const fields = ['ele1', 'ele2', 'local', 'common', 'boss', 'talent', 'weapon', 'weekly'];
     const totals = { mora: 0 };
@@ -292,6 +296,5 @@ export const getAscensionTotals = array => {
 
         if (a.mora) totals.mora += a.mora;
     });
-    
     return totals;
 }
