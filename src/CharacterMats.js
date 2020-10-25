@@ -47,7 +47,7 @@ export default ({ type, character, onBoundsChanged, onDelete }) => {
 						}} />
 					</div>
 				</div>
-				<div>{character.ascensions.map((a, i) =>
+				<div className="mats">{character.ascensions.map((a, i) =>
 					<ItemList key={`ascension_${i}`} className={`flex${!checkBounds(bounds.ascension, i) ? ' inactive' : ''}`}
 						mora={a.mora} items={isCharacter ? [a.ele1, a.ele2, a.local, a.common] : [a.weapon, a.boss, a.common]} />)}
 				</div>
@@ -80,7 +80,7 @@ export default ({ type, character, onBoundsChanged, onDelete }) => {
 								</div>
 							</div>)}
 						</div>
-						<div>{character.talents.map((a, i) =>
+						<div className="mats">{character.talents.map((a, i) =>
 							<ItemList key={`talent_${i}`} className={`flex${talentKeys.includes(focused) && !checkBoundsOffset(bounds[focused], i) ? ' inactive' : ''}`}
 								mora={a.mora} items={[a.talent, a.common, a.weekly]} />)}
 						</div>

@@ -1,6 +1,6 @@
-html, body, #root, .main {
+html, body, #root {
   margin: 0;
-  padding: 0; 
+  padding: 0;
   height: 100%;
 }
 
@@ -21,6 +21,7 @@ img {
 }
 
 .controls {
+  flex-wrap: wrap;
   margin-bottom: 1.5em;
 
   select, input {
@@ -43,31 +44,30 @@ img {
 .main {
   display: flex;
   flex-direction: column;
+  min-height: 100%;
 
   & > .row {
     padding: 0 1em;
 
     &:last-child {
-      flex: 1;
+      padding-bottom: 3em;
     }
   }
 }
 
 .list {
   flex-wrap: wrap;
+  flex: 1 0;
 }
 
 .total {
   flex-wrap: wrap;
-  padding-bottom: 1.5em;
-}
-
-.grand-total {
-  width: 64em;
+  max-width: 64em;
 }
 
 .char {
   margin-right: 4em;
+  margin-bottom: 1.5em;
   width: 34em;
 
   fieldset {
@@ -116,8 +116,13 @@ img {
     width: 53px;
   }
 
-  .inactive {
-    opacity: 0.2;
+  .mats {
+    flex: 1;
+    overflow: hidden;
+
+    .inactive {
+      opacity: 0.2;
+    }
   }
 
   .talents {
