@@ -1,14 +1,17 @@
 import React, { useState, Fragment } from 'react';
 import WikiApi from './WikiApi';
-import Item from './Item';
-import Mora from './Mora';
 import ItemList from './ItemList';
 import { getAscensionTotals } from './Util';
 
 const clamp = (value, min, max) => Math.max(Math.min(value, max), min);
 
+const talentLabels = ['Attack', 'Skill', 'Burst'];
+const talentKeys = talentLabels.map(str => str.toLowerCase());
+
 export default ({ character, onBoundsChanged, onDelete }) => {
 	const [showTalents, setShowTalents] = useState(false);
+	const [focused, setFocus] = useState('');
+
 	const toggleTalents = () => {
 		if (showTalents) {
 			onBoundsChanged('talents', 1, 1);
@@ -21,14 +24,12 @@ export default ({ character, onBoundsChanged, onDelete }) => {
 	};
 
 	const bounds = character.bounds;
-	const current = bounds.ascension.current;
-	const target = bounds.ascension.target;
 
-	const totals = getAscensionTotals(character.ascensions.filter((_, i) => i >= current && i < target)
-		.concat(character.talents.filter((_, i) => i >= bounds.attack.current - 1 && i < bounds.attack.target - 1))
-		.concat(character.talents.filter((_, i) => i >= bounds.skill.current - 1 && i < bounds.skill.target - 1))
-		.concat(character.talents.filter((_, i) => i >= bounds.burst.current - 1 && i < bounds.burst.target - 1))
-	);
+	const checkBounds = ({ current, target }, i) => i >= current && i < target;
+	const checkBoundsOffset = ({ current, target }, i) => checkBounds({ current: current - 1, target: target - 1 }, i);
+
+	const totals = getAscensionTotals(character.ascensions.filter((_, i) => checkBounds(bounds.ascension, i))
+		.concat(talentKeys.map(key => character.talents.filter((_, i) => checkBoundsOffset(bounds[key], i))).flat()));
 
 	return (
 		<div className="char container">
@@ -42,19 +43,19 @@ export default ({ character, onBoundsChanged, onDelete }) => {
 						title={character.name}
 						width={106}
 						height={106} />
-					<div>
-						<input type="number" value={current} onChange={e => {
+					<div onFocus={() => setFocus('ascension')} onBlur={() => setFocus('')}>
+						<input type="number" value={bounds.ascension.current} onChange={e => {
 							const value = clamp(e.target.value, 0, 6);
-							onBoundsChanged('ascension', value, Math.max(value, target));
+							onBoundsChanged('ascension', value, Math.max(value, bounds.ascension.target));
 						}} />
-						<input type="number" value={target} onChange={e => {
+						<input type="number" value={bounds.ascension.target} onChange={e => {
 							const value = clamp(e.target.value, 0, 6);
-							onBoundsChanged('ascension', Math.min(value, current), value);
+							onBoundsChanged('ascension', Math.min(value, bounds.ascension.current), value);
 						}} />
 					</div>
 				</div>
 				<div>{character.ascensions.map((a, i) =>
-					<ItemList key={`ascension_${i}`} className={`flex${i < current || i + 1 > target ? ' inactive' : ''}`}
+					<ItemList key={`ascension_${i}`} className={`flex${!checkBounds(bounds.ascension, i) ? ' inactive' : ''}`}
 						mora={a.mora} items={[a.ele1, a.ele2, a.local, a.common]} />)}
 				</div>
 			</div>
@@ -65,56 +66,29 @@ export default ({ character, onBoundsChanged, onDelete }) => {
 						{showTalents ? <Fragment>&#65293;</Fragment> : <Fragment>&#65291;</Fragment>}
 					</button>
 				</div>
-				<fieldset className={`flex${showTalents ? '' : ' hidden'}`}>
-					<div className="thumb">
-						<img className="talent_image"
-							src={WikiApi.file(`Talent ${character.talentNames.attack}.png`)}
-							alt={character.talentNames.attack}
-							title={character.talentNames.attack} />
-						<span className="h6 talent_name"> Attack</span>
-						<div>
-							<input type="number" value={bounds.attack.current} onChange={e => {
-								const value = clamp(e.target.value, 1, 10);
-								onBoundsChanged('attack', value, Math.max(value, bounds.attack.target));
-							}} />
-							<input type="number" value={bounds.attack.target} onChange={e => {
-								const value = clamp(e.target.value, 1, 10);
-								onBoundsChanged('attack', Math.min(value, bounds.attack.current), value);
-							}} />
-						</div>
-						<img className="talent_image"
-							src={WikiApi.file(`Talent ${character.talentNames.skill}.png`)}
-							alt={character.talentNames.skill}
-							title={character.talentNames.skill} />
-						<span className="h6 talent_name"> Skill</span>
-						<div>
-							<input type="number" value={bounds.skill.current} onChange={e => {
-								const value = clamp(e.target.value, 1, 10);
-								onBoundsChanged('skill', value, Math.max(value, bounds.skill.target));
-							}} />
-							<input type="number" value={bounds.skill.target} onChange={e => {
-								const value = clamp(e.target.value, 1, 10);
-								onBoundsChanged('skill', Math.min(value, bounds.skill.current), value);
-							}} />
-						</div>
-						<img className="talent_image"
-							src={WikiApi.file(`Talent ${character.talentNames.burst}.png`)}
-							alt={character.talentNames.burst}
-							title={character.talentNames.busrt} />
-						<span className="h6 talent_name"> Burst</span>
-						<div>
-							<input type="number" value={bounds.burst.current} onChange={e => {
-								const value = clamp(e.target.value, 1, 10);
-								onBoundsChanged('burst', value, Math.max(value, bounds.burst.target));
-							}} />
-							<input type="number" value={bounds.burst.target} onChange={e => {
-								const value = clamp(e.target.value, 1, 10);
-								onBoundsChanged('burst', Math.min(value, bounds.burst.current), value);
-							}} />
-						</div>
+				<fieldset className={`flex${showTalents ? '' : ' hidden'}`} disabled={!showTalents}>
+					<div className="thumb">{talentKeys.map((key, i) =>
+						<div key={`talent_${i}`}>
+							<img className="talent_image"
+								src={WikiApi.file(`Talent ${character.talentNames[key]}.png`)}
+								alt={character.talentNames[key]}
+								title={character.talentNames[key]} />
+							<span className="h6 talent_name"> {talentLabels[i]}</span>
+							<div onFocus={() => setFocus(key)} onBlur={() => setFocus('')}>
+								<input type="number" value={bounds[key].current} onChange={e => {
+									const value = clamp(e.target.value, 1, 10);
+									onBoundsChanged(key, value, Math.max(value, bounds[key].target));
+								}} />
+								<input type="number" value={bounds[key].target} onChange={e => {
+									const value = clamp(e.target.value, 1, 10);
+									onBoundsChanged(key, Math.min(value, bounds[key].current), value);
+								}} />
+							</div>
+						</div>)}
 					</div>
 					<div>{character.talents.map((a, i) =>
-						<ItemList key={`talent_${i}`} className={`flex`} mora={a.mora} items={[a.talent, a.common, a.weekly]} />)}
+						<ItemList key={`talent_${i}`} className={`flex${talentKeys.includes(focused) && !checkBoundsOffset(bounds[focused], i) ? ' inactive' : ''}`}
+							mora={a.mora} items={[a.talent, a.common, a.weekly]} />)}
 					</div>
 				</fieldset>
 			</div>
