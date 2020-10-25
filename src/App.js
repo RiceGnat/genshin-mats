@@ -4,65 +4,14 @@ import WikiApi from './WikiApi';
 import CharacterMats from './CharacterMats';
 import Item from './Item';
 import Mora from './Mora';
-import { getAscensionTotals } from './Util';
-
-const parseAscension = wikitext => {
-	const mats = {};
-	wikitext.match(/\{\{Character Ascension Materials\s*\|(.+?)\}\}/s)[1]
-		.split('|')
-		.map(mat => mat.split('='))
-		.forEach(o => mats[o[0].trim()] = o[1].trim());
-	return mats;
-}
-
-const getAscensionLevels = data => {
-	const item = (name, count) => ({ name, count });
-	const ascension = (ele1, ele2, local, common, mora) => ({ ele1, ele2, local, common, mora });
-	return [
-		ascension(
-			item(`${data.ele1} Sliver`, 1),
-			null,
-			item(`${data.local}`, 3),
-			item(`${data.common1}`, 3),
-			20000
-		),
-		ascension(
-			item(`${data.ele1} Fragment`, 3),
-			data.ele2 && item(`${data.ele2}`, 2),
-			item(`${data.local}`, 10),
-			item(`${data.common1}`, 15),
-			40000
-		),
-		ascension(
-			item(`${data.ele1} Fragment`, 6),
-			data.ele2 && item(`${data.ele2}`, 4),
-			item(`${data.local}`, 20),
-			item(`${data.common2}`, 12),
-			60000
-		),
-		ascension(
-			item(`${data.ele1} Chunk`, 3),
-			data.ele2 && item(`${data.ele2}`, 8),
-			item(`${data.local}`, 30),
-			item(`${data.common2}`, 18),
-			80000
-		),
-		ascension(
-			item(`${data.ele1} Chunk`, 6),
-			data.ele2 && item(`${data.ele2}`, 12),
-			item(`${data.local}`, 45),
-			item(`${data.common3}`, 12),
-			100000
-		),
-		ascension(
-			item(`${data.ele1} Gemstone`, 6),
-			data.ele2 && item(`${data.ele2}`, 20),
-			item(`${data.local}`, 60),
-			item(`${data.common3}`, 24),
-			120000
-		)
-	];
-}
+import {
+	parseAscensionMats,
+	parseTalentMats,
+	parseTalentNames,
+	getAscensionLevels,
+	getAscensionTotals,
+	getTalentLevels
+} from './Util';
 
 export default class extends Component {
 	constructor(props) {
@@ -82,10 +31,15 @@ export default class extends Component {
 				.filter(({ ns }) => ns === 0)
 				.map(({ title }) => title))
 			.then(characters => WikiApi.get(`prop=revisions&rvslots=main&rvprop=content&titles=${characters.join('|')}`)
-				.then(data => Object.values(data.query.pages).map(page => ({
-					name: page.title,
-					ascension: parseAscension(page.revisions[0].slots.main['*'])
-				}))));
+				.then(data => Object.values(data.query.pages).map(page => {
+					const wikitext = page.revisions[0].slots.main['*'];
+					return {
+						name: page.title,
+						ascensions: parseAscensionMats(wikitext),
+						talents: parseTalentMats(wikitext),
+						talentNames: parseTalentNames(wikitext)
+					};
+				})));
 
 		const names = characters.map(({ name }) => name).sort();
 
@@ -104,8 +58,14 @@ export default class extends Component {
 			if (char) {
 				list.push({
 					...char,
-					ascension: getAscensionLevels(char.ascension),
-					bounds: { current: 0, target: 6}
+					ascensions: getAscensionLevels(char.ascensions),
+					talents: getTalentLevels(char.talents),
+					bounds: {
+						ascension: { current: 0, target: 6 },
+						attack: { current: 1, target: 1 },
+						skill: { current: 1, target: 1 },
+						burst: { current: 1, target: 1 }
+					}
 				});
 				this.setState({ list });
 			}
@@ -114,7 +74,10 @@ export default class extends Component {
 
 	render = () => {
 		const totals = getAscensionTotals(this.state.list
-			.map(char => char.ascension.filter((_, i) => i >= char.bounds.current && i < char.bounds.target))
+			.map(char => char.ascensions.filter((_, i) => i >= char.bounds.ascension.current && i < char.bounds.ascension.target)
+				.concat(char.talents.filter((_, i) => i >= char.bounds.attack.current - 1 && i < char.bounds.attack.target))
+				.concat(char.talents.filter((_, i) => i >= char.bounds.skill.current - 1 && i < char.bounds.skill.target))
+				.concat(char.talents.filter((_, i) => i >= char.bounds.burst.current - 1 && i < char.bounds.burst.target)))
 			.flat());
 
 		return (
@@ -128,9 +91,21 @@ export default class extends Component {
 				<div className="list row flex">
 					{this.state.list.map((char, i) =>
 						<CharacterMats key={char.name} character={char}
-							onBoundsChanged={(current, target) => {
+							onBoundsChanged={(key, current, target) => {
 								const list = this.state.list;
-								list[i] = { ...char, bounds: { current, target } };
+								const bounds = key === 'talents' ? {
+									...char.bounds,
+									attack: { current, target },
+									skill: { current, target },
+									burst: { current, target }
+								} : {
+									...char.bounds,
+									[key]: { current, target }
+								};
+								list[i] = {
+									...char,
+									bounds
+								};
 								this.setState({ list });
 							}}
 							onDelete={() => {

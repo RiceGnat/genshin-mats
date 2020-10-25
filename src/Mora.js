@@ -6,5 +6,5 @@ export default ({ amount }) =>
         <img src={WikiApi.file(`Icon_Mora.png`)}
             alt="Mora"
             title="Mora" />
-        <span className="h6"> {amount}</span>
+        <span className="h6"> {amount === undefined ? '?' : amount}</span>
     </div>;

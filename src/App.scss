@@ -12,6 +12,10 @@ input:focus {
   z-index: 1;
 }
 
+img {
+  object-fit: contain;
+}
+
 .controls {
   select, input {
     margin-right: 0.5em;
@@ -41,11 +45,18 @@ input:focus {
 
 .total {
   flex-wrap: wrap;
-  padding: 0 2em 1.5em;
+  padding-bottom: 1.5em;
+  width: 32em;
 }
 
 .char {
-  margin-right: 2.5em;
+  margin-right: 5em;
+
+  fieldset {
+    padding: 0;
+    margin: 0;
+    border: 0;
+  }
 
   .delete-btn {
     position: absolute;
@@ -74,7 +85,7 @@ input:focus {
     margin-right: 1em;
   }
 
-  .ascension input[type=number] {
+  input[type=number] {
     width: 53px;
   }
 
@@ -82,20 +93,65 @@ input:focus {
     opacity: 0.2;
   }
 
-  .total {
-    width: 32em;
+  .talents {
+    h5, .toggle {
+      align-self: baseline;
+    }
+
+    .toggle {
+      margin: 0 0 0 0.25em;
+      font-weight: 200;
+      outline: 0;
+    }
+
+    & > fieldset {
+      max-height: 20em;
+      transition-property: max-height;
+
+      &.hidden {
+        max-height: 0;
+        overflow: hidden;
+      }
+    }
+
+    .talent_image {
+      width: 30px;
+      height: 30px;
+    }
+
+    .talent_image, .talent_name {
+      vertical-align: middle;
+    }
+
+    input {
+      margin: 0.25em 0 2em;
+    }
   }
 }
 
 .item {
   width: 5em;
+  margin: 1px 0;
   white-space: nowrap;
 
-  img {
+  img, .unknown {
     width: 30px;
     height: 30px;
     vertical-align: top;
-    object-fit: contain;
+  }
+
+  .unknown {
+    display: inline-block;
+    position: relative;
+    background-color: var(--primary-alt);
+
+    &::after {
+      content: '?';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+    }
   }
 }
 
