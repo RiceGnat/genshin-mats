@@ -60,11 +60,15 @@ img {
 .total {
   flex-wrap: wrap;
   padding-bottom: 1.5em;
+}
+
+.grand-total {
   width: 64em;
 }
 
 .char {
-  margin-right: 5em;
+  margin-right: 4em;
+  width: 34em;
 
   fieldset {
     padding: 0;
@@ -150,10 +154,6 @@ img {
     input {
       margin: 0.25em 0 2em;
     }
-  }
-
-  .total {
-    width: 32em;
   }
 }
 

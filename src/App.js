@@ -203,7 +203,7 @@ export default class extends Component {
 				{this.state.list.length > 1 && 
 					<div className="row">
 						<h4>Total mats for all {this.state.list.map(({ type }) => `${type}s`).filter((value, index, self) => self.indexOf(value) === index).sort().join(' and ')}</h4>
-						<ItemList className="flex total" mora={totals.mora} items={[
+						<ItemList className="flex total grand-total" mora={totals.mora} items={[
 							...Object.values(totals.ele1),
 							...Object.values(totals.ele2),
 							...Object.values(totals.local),
