@@ -149,14 +149,14 @@ export default class extends Component {
 						<select onChange={e => this.setState({ selectedCharacter: e.target.value })}>
 							{this.state.characterNames.map(name => <option key={name}>{name}</option>)}
 						</select>
-						<input type="submit" value="Add" onClick={this.addCharacter} />
+						<input type="button" value="Add" onClick={this.addCharacter} />
 					</div>
 					<div>
 						<h4>Weapons</h4>
 						<select onChange={e => this.setState({ selectedWeapon: e.target.value })}>
 							{this.state.weaponNames.map(name => <option key={name}>{name}</option>)}
 						</select>
-						<input type="submit" value="Add" onClick={this.addWeapon} />
+						<input type="button" value="Add" onClick={this.addWeapon} />
 					</div>
 					<div>
 						<h4>Settings</h4>
@@ -170,7 +170,7 @@ export default class extends Component {
 								onChange={e => this.updateSetting({ darkMode: e.target.checked })} />
 							<label htmlFor="darkMode"><span className="check large"></span>Dark mode</label>
 						</span>
-						<input type="button" value="Clear list" onClick={this.clearList} />
+						<input type="reset" value="Clear list" onClick={this.clearList} />
 						<input type="reset" value="Reset" onClick={this.reset} />
 					</div>
 				</div>
