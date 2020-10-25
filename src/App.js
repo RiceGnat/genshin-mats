@@ -12,6 +12,11 @@ import {
 } from './Util';
 import ItemList from './ItemList';
 
+const defaultSettings = {
+	showTalents: true,
+	darkMode: false
+};
+
 export default class extends Component {
 	constructor(props) {
 		super(props);
@@ -23,15 +28,34 @@ export default class extends Component {
 			weapons: [],
 			weaponNames: [],
 			selectedWeapon: '',
-			list: []
+			list: [],
+			settings: { ...defaultSettings }
 		};
 	}
 
 	componentDidMount = async () => {
+		let list, settings;
+		
+		try {
+			settings = JSON.parse(localStorage.getItem('settings')) || {};
+		}
+		catch {
+			settings = { ...defaultSettings };
+		}
+
+		this.setState({ settings });
+
 		const characters = await WikiApi.getCharacters();
 		const characterNames = characters.map(({ name }) => name).sort();
 		const weapons = await WikiApi.getWeapons();
 		const weaponNames = weapons.map(({ name }) => name).sort();
+		
+		try {
+			list = JSON.parse(localStorage.getItem('list')) || [];
+		}
+		catch {
+			list = [];
+		}
 
 		this.setState({
 			characters,
@@ -39,7 +63,8 @@ export default class extends Component {
 			selectedCharacter: characterNames[0],
 			weapons,
 			weaponNames,
-			selectedWeapon: weaponNames[0]
+			selectedWeapon: weaponNames[0],
+			list
 		});
 	}
 
@@ -61,7 +86,7 @@ export default class extends Component {
 						burst: { current: 1, target: 1 }
 					}
 				});
-				this.setState({ list });
+				this.updateList(list);
 			}
 		}
 	}
@@ -81,9 +106,31 @@ export default class extends Component {
 						ascension: { current: 0, target: 6 }
 					}
 				});
-				this.setState({ list });
+				this.updateList(list);
 			}
 		}
+	}
+
+	updateList = list => {
+		this.setState({ list });
+		localStorage.setItem('list', JSON.stringify(list));
+	}
+
+	updateSettings = settings => {
+		this.setState({ settings });
+		localStorage.setItem('settings', JSON.stringify(settings));
+	}
+
+	updateSetting = setting => this.updateSettings({
+		...this.state.settings,
+		...setting
+	});
+
+	clearList = () => this.updateList([]);
+
+	reset = () => {
+		this.updateSettings({ ...defaultSettings });
+		this.clearList();
 	}
 
 	render = () => {
@@ -95,26 +142,41 @@ export default class extends Component {
 			.flat());
 
 		return (
-			<div className="main container">
+			<div className={`main container${this.state.settings.darkMode ? ' dark' : ''}`}>
 				<div className="controls row flex">
 					<div>
 						<h4>Characters</h4>
 						<select onChange={e => this.setState({ selectedCharacter: e.target.value })}>
 							{this.state.characterNames.map(name => <option key={name}>{name}</option>)}
 						</select>
-						<input type="button" value="Add" onClick={this.addCharacter} />
+						<input type="submit" value="Add" onClick={this.addCharacter} />
 					</div>
 					<div>
 						<h4>Weapons</h4>
 						<select onChange={e => this.setState({ selectedWeapon: e.target.value })}>
 							{this.state.weaponNames.map(name => <option key={name}>{name}</option>)}
 						</select>
-						<input type="button" value="Add" onClick={this.addWeapon} />
+						<input type="submit" value="Add" onClick={this.addWeapon} />
+					</div>
+					<div>
+						<h4>Settings</h4>
+						<span className="checkbox">
+							<input type="checkbox" id="showTalents" checked={this.state.settings.showTalents}
+								onChange={e => this.updateSetting({ showTalents: e.target.checked })} />
+							<label htmlFor="showTalents"><span className="check large"></span>Show talents</label>
+						</span>
+						<span className="checkbox">
+							<input type="checkbox" id="darkMode" checked={this.state.settings.darkMode}
+								onChange={e => this.updateSetting({ darkMode: e.target.checked })} />
+							<label htmlFor="darkMode"><span className="check large"></span>Dark mode</label>
+						</span>
+						<input type="button" value="Clear list" onClick={this.clearList} />
+						<input type="reset" value="Reset" onClick={this.reset} />
 					</div>
 				</div>
 				<div className="list row flex">
 					{this.state.list.map((char, i) =>
-						<CharacterMats key={char.name} type={char.type} character={char}
+						<CharacterMats key={char.name} type={char.type} character={char} showTalents={this.state.settings.showTalents}
 							onBoundsChanged={(key, current, target) => {
 								const list = this.state.list;
 								const bounds = key === 'talents' ? {
@@ -130,12 +192,12 @@ export default class extends Component {
 									...char,
 									bounds
 								};
-								this.setState({ list });
+								this.updateList(list);
 							}}
 							onDelete={() => {
 								const list = this.state.list;
 								list.splice(i, 1);
-								this.setState({ list });
+								this.updateList(list);
 							}} />)}
 				</div>
 				{this.state.list.length > 1 && 

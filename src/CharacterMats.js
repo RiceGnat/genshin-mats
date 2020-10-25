@@ -8,11 +8,12 @@ const clamp = (value, min, max) => Math.max(Math.min(value, max), min);
 const talentLabels = ['Attack', 'Skill', 'Burst'];
 const talentKeys = talentLabels.map(str => str.toLowerCase());
 
-export default ({ type, character, onBoundsChanged, onDelete }) => {
-	const [showTalents, setShowTalents] = useState(false);
+export default ({ type, character, showTalents: showTalentsGlobal, onBoundsChanged, onDelete }) => {
+	const [showCharTalents, setShowTalents] = useState(false);
 	const [focused, setFocus] = useState('');
 
 	const isCharacter = type === 'character';
+	const showTalents = showTalentsGlobal && showCharTalents;
 
 	const toggleTalents = () => {
 		if (showTalents) {
@@ -61,7 +62,7 @@ export default ({ type, character, onBoundsChanged, onDelete }) => {
 						mora={a.mora} items={isCharacter ? [a.ele1, a.ele2, a.local, a.common] : [a.weapon, a.boss, a.common]} />)}
 				</div>
 			</div>
-			{isCharacter &&
+			{isCharacter && showTalentsGlobal &&
 				<div className="talents row">
 					<div className="flex container">
 						<h5 onClick={toggleTalents}>Talents</h5>
