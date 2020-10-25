@@ -4,6 +4,6 @@ import Mora from './Mora';
 
 export default ({ items, mora, ...others }) => 
 <div {...others}>{items.map((item, i) =>
-    <Item key={item ? (item.name || 'unknown') : 'null'} item={item} />)}
+    <Item key={item ? (item.name || `unknown${i}`) : `null${i}`} item={item} />)}
     <Mora amount={mora} />
 </div>
