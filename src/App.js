@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import './App.scss';
 import WikiApi from './WikiApi';
 import CharacterMats from './CharacterMats';
-import Item from './Item';
-import Mora from './Mora';
 import {
 	parseAscensionMats,
 	parseTalentMats,
@@ -12,6 +10,7 @@ import {
 	getAscensionTotals,
 	getTalentLevels
 } from './Util';
+import ItemList from './ItemList';
 
 export default class extends Component {
 	constructor(props) {
@@ -117,14 +116,13 @@ export default class extends Component {
 				{this.state.list.length > 1 && 
 					<div className="row">
 						<h4>Total mats for all characters</h4>
-						<div className="flex total">{[
+						<ItemList className="flex total" mora={totals.mora} items={[
 							...Object.values(totals.ele1),
 							...Object.values(totals.ele2),
 							...Object.values(totals.local),
-							...Object.values(totals.common)].map(item =>
-							<Item key={item.name} item={item} />)}
-							<Mora amount={totals.mora} />
-						</div>
+							...Object.values(totals.common),
+							...Object.values(totals.talent),
+							...Object.values(totals.weekly)]} />
 					</div>
 				}
 			</div>

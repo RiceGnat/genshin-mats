@@ -2,12 +2,23 @@ import React, { useState, Fragment } from 'react';
 import WikiApi from './WikiApi';
 import Item from './Item';
 import Mora from './Mora';
+import ItemList from './ItemList';
 import { getAscensionTotals } from './Util';
 
 const clamp = (value, min, max) => Math.max(Math.min(value, max), min);
 
 export default ({ character, onBoundsChanged, onDelete }) => {
 	const [showTalents, setShowTalents] = useState(false);
+	const toggleTalents = () => {
+		if (showTalents) {
+			onBoundsChanged('talents', 1, 1);
+			setShowTalents(false);
+		}
+		else {
+			onBoundsChanged('talents', 1, 10);
+			setShowTalents(true);
+		}
+	};
 
 	const bounds = character.bounds;
 	const current = bounds.ascension.current;
@@ -43,28 +54,14 @@ export default ({ character, onBoundsChanged, onDelete }) => {
 					</div>
 				</div>
 				<div>{character.ascensions.map((a, i) =>
-					<div key={`ascension_${i}`} className={`flex${i < current || i + 1 > target ? ' inactive' : ''}`}>
-						<Item item={a.ele1} />
-						<Item item={a.ele2} />
-						<Item item={a.local} />
-						<Item item={a.common} />
-						<Mora amount={a.mora} />
-					</div>)}
+					<ItemList key={`ascension_${i}`} className={`flex${i < current || i + 1 > target ? ' inactive' : ''}`}
+						mora={a.mora} items={[a.ele1, a.ele2, a.local, a.common]} />)}
 				</div>
 			</div>
 			<div className="talents row">
 				<div className="flex container">
-					<h5>Talents</h5>
-					<button type="button" className="link-button h5 toggle" onClick={() => {
-						if (showTalents) {
-							onBoundsChanged('talents', 1, 1);
-							setShowTalents(false);
-						}
-						else {
-							onBoundsChanged('talents', 1, 10);
-							setShowTalents(true);
-						}
-					}}>
+					<h5 onClick={toggleTalents}>Talents</h5>
+					<button type="button" className="link-button h5 toggle" onClick={toggleTalents}>
 						{showTalents ? <Fragment>&#65293;</Fragment> : <Fragment>&#65291;</Fragment>}
 					</button>
 				</div>
@@ -117,27 +114,19 @@ export default ({ character, onBoundsChanged, onDelete }) => {
 						</div>
 					</div>
 					<div>{character.talents.map((a, i) =>
-						<div key={`talent_${i}`} className={`flex`}>
-							<Item item={a.talent} />
-							<Item item={a.common} />
-							<Item item={a.weekly} />
-							<Mora amount={a.mora} />
-						</div>)}
+						<ItemList key={`talent_${i}`} className={`flex`} mora={a.mora} items={[a.talent, a.common, a.weekly]} />)}
 					</div>
 				</fieldset>
 			</div>
 			<div className="row">
 				<h5>Total character mats</h5>
-				<div className="total flex">{[
+				<ItemList className="total flex" mora={totals.mora} items={[
 					...Object.values(totals.ele1),
 					...Object.values(totals.ele2),
 					...Object.values(totals.local),
 					...Object.values(totals.common),
 					...Object.values(totals.talent),
-					...Object.values(totals.weekly)].map(item =>
-					<Item key={`subtotal_${item.name}`} item={item} />)}
-					<Mora amount={totals.mora} />
-				</div>
+					...Object.values(totals.weekly)]} />
 			</div>
 		</div>
 	);
