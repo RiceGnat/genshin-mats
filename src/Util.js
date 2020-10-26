@@ -34,8 +34,11 @@ export const parseWeaponTable = wikitext =>
     
 export const parseWeaponDetails = wikitext => {
     const params = extractWikiTemplateParams(wikitext, /\{\{Weapon Infobox\s*\|(.+?)\}\}/s);
+    const versionMatches = wikitext.match(/\{\{Version\s*\|(.+?)\}\}/s);
+
     return {
-        rarity: parseInt(params.rarity)
+        rarity: parseInt(params.rarity),
+        released: versionMatches !== null      
     }
 }
 

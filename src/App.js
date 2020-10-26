@@ -57,6 +57,18 @@ export default class extends Component {
 			list = [];
 		}
 
+		list = list.map(item => {
+			const isCharacter = item.type === 'character';
+			const data = (isCharacter ? characters : weapons).find(({ name }) => name === item.name);
+			return {
+				...item,
+				ascensions: isCharacter ? getAscensionLevels(data.ascensions) : getWeaponAscensionLevels(data.ascensions),
+				talents: isCharacter ? getTalentLevels(data.talents) : []
+			};
+		})
+		
+		localStorage.setItem('list', JSON.stringify(list));
+
 		this.setState({
 			characters,
 			characterNames,

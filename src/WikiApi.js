@@ -38,9 +38,9 @@ export default class {
           })));
 
      static getWeapons = () => Promise.all([
-               `action=query&list=categorymembers&cmtitle=Category:5-Star_Weapons&cmlimit=max`,
-               `action=query&list=categorymembers&cmtitle=Category:4-Star_Weapons&cmlimit=max`,
-               `action=query&list=categorymembers&cmtitle=Category:3-Star_Weapons&cmlimit=max`
+               `action=query&list=categorymembers&cmtitle=Category:5-Star_Weapons&cmlimit=max&cmtype=page`,
+               `action=query&list=categorymembers&cmtitle=Category:4-Star_Weapons&cmlimit=max&cmtype=page`,
+               `action=query&list=categorymembers&cmtitle=Category:3-Star_Weapons&cmlimit=max&cmtype=page`
           ].map(url => this.get(url).then(data => data.query.categorymembers
                .filter(({ ns }) => ns === 0)
                .map(({ title }) => title))))
@@ -49,7 +49,8 @@ export default class {
                name: title,
                ...parseWeaponDetails(wikitext),
                ascensions: parseWeaponMats(wikitext)
-          })));
+          })))
+          .then(weapons => weapons.filter(({ released }) => released));
           
      static getAllWeapons = () => this.get(`action=expandtemplates&prop=wikitext&text=%7B%7B%23DPL%3A%7Cuses%20%3D%20Template%3AWeapon%20Infobox%7Cnamespace%3D%7Cinclude%3D%7BWeapon%20Infobox%7D%3A%25PAGE%25%7Ctable%3D%2CName%7Ctablesortcol%3D1%7Callowcachedresults%20%3D%20true%7D%7D`)
           .then(data => parseWeaponTable(data.expandtemplates.wikitext))
