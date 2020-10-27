@@ -144,7 +144,7 @@ export const getTalentLevels = data => {
             item(data.talentMat3, 12),
             item(data.commonMat3, 9),
             item(data.bossMat, 2),
-            undefined
+            450000
         ),
         talent(
             item(data.talentMat3, 16),
