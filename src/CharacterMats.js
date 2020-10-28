@@ -25,7 +25,7 @@ export default ({ type, character, showDetails, onBoundsChanged, onDelete }) => 
 		<div className={showDetails ? 'row' : undefined}>
 			{showDetails && <h5>Total {type} mats</h5>}
 			<ItemList className="flex wrap" mora={totals.mora}
-				items={[...Object.values(totals).map(sub => Object.values(sub)).flat()]} />
+				items={Object.values(totals).map(sub => Object.values(sub)).flat()} />
 		</div>;
 
 	return (
@@ -39,11 +39,13 @@ export default ({ type, character, showDetails, onBoundsChanged, onDelete }) => 
 							src={WikiApi.file(isCharacter ? `Character_${character.name}_Thumb.png` : `Weapon_${character.name}.png`)}
 							alt={character.name}
 							title={character.name} />
-						<div className="rarity">
-							<img src={WikiApi.file(`Icon_${character.rarity}_Stars.png`)}
-								alt={`${character.rarity}-star ${type}`}
-								title={`${character.rarity}-star ${type}`} />
-						</div>
+						{showDetails &&
+							<div className="rarity">
+								<img src={WikiApi.file(`Icon_${character.rarity}_Stars.png`)}
+									alt={`${character.rarity}-star ${type}`}
+									title={`${character.rarity}-star ${type}`} />
+							</div>
+						}
 					</div>
 					<div className="h6">Ascension</div>
 					<div onFocus={() => setFocus('ascension')} onBlur={() => setFocus('')}>
