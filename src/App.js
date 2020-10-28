@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import './App.scss';
 import './App.mobile.scss';
 import WikiApi from './WikiApi';
@@ -10,11 +10,15 @@ import {
 	checkBounds,
 	checkBoundsOffset,
 	getAscensionTotals,
+	getDomainDay,
 } from './Util';
 import ItemList from './ItemList';
 
+const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
 const defaultSettings = {
-	darkMode: false
+	darkMode: false,
+	showDetails: true
 };
 
 export default class extends Component {
@@ -30,6 +34,7 @@ export default class extends Component {
 			weaponNames: [],
 			selectedWeapon: '',
 			list: [],
+			weekday: 'sunday',
 			settings: { ...defaultSettings }
 		};
 	}
@@ -61,11 +66,12 @@ export default class extends Component {
 		list = list.map(item => {
 			const isCharacter = item.type === 'character';
 			const data = (isCharacter ? characters : weapons).find(({ name }) => name === item.name);
-			return {
+			if (data) return {
 				...item,
-				ascensions: isCharacter ? getAscensionLevels(data.ascensions) : getWeaponAscensionLevels(data.ascensions),
+				ascensions: isCharacter ? getAscensionLevels(data.ascensions) : getWeaponAscensionLevels(data.ascensions, data.rarity),
 				talents: isCharacter ? getTalentLevels(data.talents) : []
 			};
+			else return item;
 		})
 		
 		localStorage.setItem('list', JSON.stringify(list));
@@ -155,9 +161,14 @@ export default class extends Component {
 				.concat(char.talents.filter((_, i) => checkBoundsOffset(char.bounds.burst, i))))
 			.flat());
 
+		const overworld = ['local', 'common', 'boss'].map(key => Object.values(totals[key])).flat();
+		const elites = ['ele1', 'ele2', 'weekly'].map(key => Object.values(totals[key])).flat();
+		const talents = Object.values(totals.talent);
+		const weapons = Object.values(totals.weapon);
+
 		return (
 			<div className={`main container${this.state.settings.darkMode ? ' dark' : ''}`}>
-				<div className="controls row flex">
+				<div className="controls row flex wrap">
 					<div>
 						<h4>Characters</h4>
 						{this.state.ready ?
@@ -184,18 +195,24 @@ export default class extends Component {
 					</div>
 					<div>
 						<h4>Settings</h4>
-						<span className="checkbox">
+						<span className="checkbox container">
 							<input type="checkbox" id="darkMode" checked={this.state.settings.darkMode}
 								onChange={e => this.updateSetting({ darkMode: e.target.checked })} />
 							<label htmlFor="darkMode"><span className="check large"></span>Dark mode</label>
+						</span>
+						<span className="checkbox container">
+							<input type="checkbox" id="showDetails" checked={this.state.settings.showDetails}
+								onChange={e => this.updateSetting({ showDetails: e.target.checked })} />
+							<label htmlFor="showDetails"><span className="check large"></span>Show details</label>
 						</span>
 						<input type="reset" value="Clear list" onClick={this.clearList} />
 						<input type="reset" value="Reset" onClick={this.reset} />
 					</div>
 				</div>
-				<div className="list row flex">
+				<div className="list row flex wrap">
 					{this.state.list.map((char, i) =>
 						<CharacterMats key={char.name} type={char.type} character={char}
+							showDetails={this.state.settings.showDetails}
 							onBoundsChanged={(key, current, target) => {
 								const list = this.state.list;
 								const bounds = key === 'talents' ? {
@@ -220,17 +237,55 @@ export default class extends Component {
 							}} />)}
 				</div>
 				{this.state.list.length > 1 && 
-					<div className="row">
+					<div className="total row">
 						<h4>Total mats for all {this.state.list.map(({ type }) => `${type}s`).filter((value, index, self) => self.indexOf(value) === index).sort().join(' and ')}</h4>
-						<ItemList className="flex total" mora={totals.mora} items={[
-							...Object.values(totals.ele1),
-							...Object.values(totals.ele2),
-							...Object.values(totals.local),
-							...Object.values(totals.common),
-							...Object.values(totals.boss),
-							...Object.values(totals.talent),
-							...Object.values(totals.weapon),
-							...Object.values(totals.weekly)]} />
+						<div className="flex wrap">
+							{overworld.length > 0 &&
+								<div className="subtotal">
+									<h5>Overworld</h5>
+									<ItemList className="flex wrap" mora={totals.mora} items={overworld} />
+								</div>
+							}
+							{elites.length > 0 &&
+								<div className="subtotal">
+									<h5>Elites and weekly bosses</h5>
+									<ItemList className="flex wrap" mora={null} items={elites} />
+								</div>
+							}
+						</div>
+						{talents.length + weapons.length > 0 &&
+							<div className="domain">
+								<h5>Domains</h5>
+								<div className="row segmented-radio-group container">
+									{days.map(day => {
+										const key = day.toLowerCase();
+										return (
+											<Fragment key={key}>
+												<input type="radio" id={key} value={key} name="weekday"
+													checked={this.state.weekday === key}
+													onChange={e => this.setState({ weekday: e.target.value })} />
+												<label htmlFor={key}>{day}</label>
+											</Fragment>);
+									})}
+								</div>
+								<div className="flex wrap">
+									{talents.length > 0 &&
+										<div className="subtotal">
+											<h6>Talents</h6>
+											<ItemList className="flex wrap" mora={null} items={talents}
+												filter={item => this.state.weekday === 'sunday' || (item && item.name && getDomainDay(item.name).includes(this.state.weekday))} />
+										</div>
+									}
+									{weapons.length > 0 &&
+										<div className="subtotal">
+											<h6>Weapons</h6>
+											<ItemList className="flex wrap" mora={null} items={weapons}
+												filter={item => this.state.weekday === 'sunday' || (item && item.name && getDomainDay(item.name).includes(this.state.weekday))} />
+										</div>
+									}
+								</div>
+							</div>
+						}
 					</div>
 				}
 			</div>

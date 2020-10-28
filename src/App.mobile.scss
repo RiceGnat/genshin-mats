@@ -1,59 +1,77 @@
 @media only screen and (max-width: 48em) {
-    .controls {
-      flex-direction: column;
-      margin-bottom: 1em;
+  .controls {
+    flex-direction: column;
+    margin-bottom: 1em;
   
-      & > div {
-        margin-bottom: 1em;
-        margin-right: 0;
-      }
+    & > div {
+    margin-bottom: 1em;
+    margin-right: 0;
     }
+  }
+
+  .total .subtotal {
+    margin-right: 0;
+  }
+
+  .domain {
+    .segmented-radio-group {
+        width: 100%;
+
+        label {
+            padding-right: 0.5em;
+            padding-left: 0.5em;
+            width: 14%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+
+    & > .flex {
+      flex-direction: column;
+    }
+  }
 }
 
 @media only screen and (max-width: 40em) {
-    .main > .row:last-child {
-        padding-bottom: 4em;
+  .char {
+    width: 100%;
+    margin-bottom: 2em;
+
+    .char_image {
+      width: 6em;
+      height: 6em;
+    }
+    
+    .rarity {
+      height: 1em;
+      margin-bottom: 0.5em;
+
+      img {
+        height: 100%;
+        vertical-align: top;
+      }
     }
 
-    .char {
-        width: 100%;
-        margin-bottom: 2em;
-
-        .char_image {
-            width: 6em;
-            height: 6em;
-        }
-        
-        .rarity {
-            height: 1em;
-            margin-bottom: 0.5em;
-
-            img {
-                height: 100%;
-                vertical-align: top;
-            }
-        }
-
-        .talents .talent_image {
-            width: 1.5em;
-            height: 1.5em;
-        }
-
-        input[type=number] {
-            width: 3em;
-        }
+    .talents .talent_image {
+      width: 1.5em;
+      height: 1.5em;
     }
 
-    .item {
-        img, .unknown {
-            width: 1.5em;
-            height: 1.5em;
-        }
+    input[type=number] {
+      width: 3em;
     }
+  }
+
+  .item {
+    img, .unknown {
+      width: 1.5em;
+      height: 1.5em;
+    }
+  }
   }
   
 @media only screen and (max-width: 36em) {
-    .char {
-        margin-right: 0;
-    }
+  .char {
+    margin-right: 0;
+  }
 }

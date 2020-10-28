@@ -20,6 +20,10 @@ img {
   margin: 0.5em 0;
 }
 
+.wrap {
+  flex-wrap: wrap;
+}
+
 @keyframes slowblink {
     0% {
         opacity: 0.2;
@@ -39,7 +43,6 @@ img {
 }
 
 .controls {
-  flex-wrap: wrap;
   margin-bottom: 1.5em;
 
   select, input {
@@ -54,7 +57,7 @@ img {
     margin-right: 3.5em;
 
     &:nth-last-child(2) {
-      flex: 1 0;
+      flex: 1 0 auto;
     }
   }
 }
@@ -66,27 +69,31 @@ img {
 
   & > .row {
     padding: 0 1em;
-
-    &:last-child {
-      padding-bottom: 3em;
-    }
   }
 }
 
 .list {
-  flex-wrap: wrap;
   flex: 1 0;
 }
 
 .total {
-  flex-wrap: wrap;
-  max-width: 64em;
+  margin-bottom: 5em;
+
+  .subtotal {
+    margin-right: 4em;
+    margin-bottom: 1.5em;
+    max-width: 30em;
+  }
 }
 
 .char {
   margin-right: 4em;
   margin-bottom: 1.5em;
   width: 34em;
+
+  &.compact {
+    width: 24em;
+  }
 
   fieldset {
     padding: 0;
@@ -137,10 +144,6 @@ img {
   .mats {
     flex: 1;
     overflow: hidden;
-
-    .inactive {
-      opacity: 0.2;
-    }
   }
 
   .talents {
@@ -177,7 +180,15 @@ img {
     input {
       margin: 0.25em 0 2em;
     }
+
+    .thumb.flex > div {
+      margin-right: 1em;
+    }
   }
+}
+  
+.unselected {
+  opacity: 0.2;
 }
 
 .item {
@@ -217,8 +228,12 @@ img {
     transition: height linear 0s 100ms, transform linear 100ms, opacity linear 100ms;
   }
 
-  &:not(.mora):hover {
+  .selected &:not(.mora):hover {
     background: var(--primary-alt);
+  }
+
+  .unselected & .popup {
+    display: none;
   }
 
   &:not(:hover) .popup {

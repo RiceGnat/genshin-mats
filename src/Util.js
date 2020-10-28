@@ -302,3 +302,10 @@ export const getAscensionTotals = array => {
     });
     return totals;
 }
+
+export const getDomainDay = mat => {
+    if (mat.match(/.+Decarabian's.+/) || mat.match(/.+from Guyun/) || mat.match(/.+("Freedom"|"Prosperity")/)) return 'monday/thursday';
+    else if (mat.match(/Boreal Wolf's.+/) || mat.match(/Mist Veiled.+Elixir/) || mat.match(/.+("Resistance"|"Diligence")/)) return 'tuesday/friday';
+    else if (mat.match(/.+Dandelion Gladiator/) || mat.match(/.+of Aerosiderite/) || mat.match(/.+("Ballad"|"Gold")/)) return 'wednesday/saturday';
+    else return '';
+}

@@ -8,7 +8,7 @@ const clamp = (value, min, max) => Math.max(Math.min(value, max), min);
 const talentLabels = ['Attack', 'Skill', 'Burst'];
 const talentKeys = talentLabels.map(str => str.toLowerCase());
 
-export default ({ type, character, onBoundsChanged, onDelete }) => {
+export default ({ type, character, showDetails, onBoundsChanged, onDelete }) => {
 	const [showTalents, setShowTalents] = useState(false);
 	const [focused, setFocus] = useState('');
 
@@ -21,8 +21,15 @@ export default ({ type, character, onBoundsChanged, onDelete }) => {
 	const totals = getAscensionTotals(character.ascensions.filter((_, i) => checkBounds(bounds.ascension, i))
 		.concat(talentKeys.map(key => character.talents.filter((_, i) => checkBoundsOffset(bounds[key], i))).flat()));
 
+	const renderTotals = () =>
+		<div className="row">
+			{showDetails && <h5>Total {type} mats</h5>}
+			<ItemList className="flex wrap" mora={totals.mora}
+				items={[...Object.values(totals).map(sub => Object.values(sub)).flat()]} />
+		</div>;
+
 	return (
-		<div className="char container">
+		<div className={`char container${showDetails ? '' : ' compact'}`}>
 			<input type="button" className="delete-btn" value="&#215;" onClick={() => onDelete()} />
 			<h4>{character.name}</h4>
 			<div className="ascension flex row">
@@ -47,10 +54,15 @@ export default ({ type, character, onBoundsChanged, onDelete }) => {
 						}} />
 					</div>
 				</div>
-				<div className="mats">{character.ascensions.map((a, i) =>
-					<ItemList key={`ascension_${i}`} className={`flex${!checkBounds(bounds.ascension, i) ? ' inactive' : ''}`}
-						mora={a.mora} items={isCharacter ? [a.ele1, a.ele2, a.local, a.common] : [a.weapon, a.boss, a.common]} />)}
-				</div>
+				{showDetails ?
+					<div className="mats">{character.ascensions.map((a, i) =>
+						<ItemList key={`ascension_${i}`}
+							className={`flex ${checkBounds(bounds.ascension, i) ? 'selected' : 'unselected'}`}
+							mora={a.mora}
+							items={isCharacter ? [a.ele1, a.ele2, a.local, a.common] : [a.weapon, a.boss, a.common]} />)}
+					</div>
+					: renderTotals()
+				}
 			</div>
 			{isCharacter &&
 				<div className="talents row">
@@ -61,7 +73,7 @@ export default ({ type, character, onBoundsChanged, onDelete }) => {
 						</button>
 					</div>
 					<fieldset className={`flex${showTalents ? '' : ' hidden'}`} disabled={!showTalents}>
-						<div className="thumb">{talentKeys.map((key, i) =>
+						<div className={`thumb${showDetails ? '' : ' flex'}`}>{talentKeys.map((key, i) =>
 							<div key={`talent_${i}`}>
 								<img className="talent_image"
 									src={WikiApi.file(`Talent ${character.talentNames[key]}.png`)}
@@ -80,25 +92,18 @@ export default ({ type, character, onBoundsChanged, onDelete }) => {
 								</div>
 							</div>)}
 						</div>
-						<div className="mats">{character.talents.map((a, i) =>
-							<ItemList key={`talent_${i}`} className={`flex${talentKeys.includes(focused) && !checkBoundsOffset(bounds[focused], i) ? ' inactive' : ''}`}
-								mora={a.mora} items={[a.talent, a.common, a.weekly]} />)}
-						</div>
+						{showDetails &&
+							<div className="mats">{character.talents.map((a, i) =>
+								<ItemList key={`talent_${i}`}
+									className={`flex${focused !== '' ? (talentKeys.includes(focused) && checkBoundsOffset(bounds[focused], i) ? ' selected' : ' unselected') : ''}`}
+									mora={a.mora}
+									items={[a.talent, a.common, a.weekly]} />)}
+							</div>
+						}
 					</fieldset>
 				</div>
 			}
-			<div className="row">
-				<h5>Total {type} mats</h5>
-				<ItemList className="total flex" mora={totals.mora} items={[
-					...Object.values(totals.ele1),
-					...Object.values(totals.ele2),
-					...Object.values(totals.weapon),
-					...Object.values(totals.local),
-					...Object.values(totals.boss),
-					...Object.values(totals.common),
-					...Object.values(totals.talent),
-					...Object.values(totals.weekly)]} />
-			</div>
+			{showDetails && renderTotals()}
 		</div>
 	);
 }
