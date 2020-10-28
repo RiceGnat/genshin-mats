@@ -223,17 +223,16 @@ img {
     padding-bottom: 1em;
     background: var(--primary);
     transform-origin: top;
-    z-index: 1;
+    z-index: 2;
 
     transition: height linear 0s 100ms, transform linear 100ms, opacity linear 100ms;
   }
 
-  .selected &:not(.mora):hover {
-    background: var(--primary-alt);
-  }
-
-  .unselected & .popup {
-    display: none;
+  .unselected &,
+  &.unselected {
+    .popup {
+      display: none;
+    }
   }
 
   &:not(:hover) .popup {

@@ -22,7 +22,7 @@ export default ({ type, character, showDetails, onBoundsChanged, onDelete }) => 
 		.concat(talentKeys.map(key => character.talents.filter((_, i) => checkBoundsOffset(bounds[key], i))).flat()));
 
 	const renderTotals = () =>
-		<div className="row">
+		<div className={showDetails && 'row'}>
 			{showDetails && <h5>Total {type} mats</h5>}
 			<ItemList className="flex wrap" mora={totals.mora}
 				items={[...Object.values(totals).map(sub => Object.values(sub)).flat()]} />
