@@ -4,7 +4,7 @@ const extractWikiTemplateParams = (wikitext, template) => {
     const params = {};
     try {
         [...wikitext.match(new RegExp(`\\{\\{${template}\\s*(.+?)\\}\\}`, 's'))[1]
-            .matchAll(/\|([^|]+?)=(.+?)(?=(?:\|(?:[^|]+?)=)|$)/gs)
+            .matchAll(/\|([^|]+?)=(.*?)(?=(?:\|(?:[^|]+?)=)|$)/gs)
         ].forEach(o => params[o[1].trim()] = o[2].trim());
     } finally {
         return params;

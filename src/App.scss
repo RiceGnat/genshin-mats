@@ -20,6 +20,24 @@ img {
   margin: 0.5em 0;
 }
 
+@keyframes slowblink {
+    0% {
+        opacity: 0.2;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.2;
+    }
+}
+
+.loading {
+    animation: slowblink 1.5s linear infinite;
+}
+
 .controls {
   flex-wrap: wrap;
   margin-bottom: 1.5em;
@@ -199,7 +217,7 @@ img {
     transition: height linear 0s 100ms, transform linear 100ms, opacity linear 100ms;
   }
 
-  &:hover {
+  &:not(.mora):hover {
     background: var(--primary-alt);
   }
 

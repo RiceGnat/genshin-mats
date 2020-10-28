@@ -25,8 +25,7 @@ export default ({ item }) => {
         {item && <Fragment>
             {item.name ?
                 <img src={WikiApi.file(`Item_${item.name}.png`)}
-                    alt={item.name}
-                    title={item.name} /> :
+                    alt={item.name} /> :
                 <div className="h6 unknown" alt="Unknown" title="Unknown"></div>}
             <span className="h6"> {item.count}</span>
             {item.name && <div className="popup">

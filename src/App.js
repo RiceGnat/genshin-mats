@@ -22,6 +22,7 @@ export default class extends Component {
 		super(props);
 
 		this.state = {
+			ready: false,
 			characters: [],
 			characterNames: [],
 			selectedCharacter: '',
@@ -70,6 +71,7 @@ export default class extends Component {
 		localStorage.setItem('list', JSON.stringify(list));
 
 		this.setState({
+			ready: true,
 			characters,
 			characterNames,
 			selectedCharacter: characterNames[0],
@@ -158,17 +160,27 @@ export default class extends Component {
 				<div className="controls row flex">
 					<div>
 						<h4>Characters</h4>
-						<select onChange={e => this.setState({ selectedCharacter: e.target.value })}>
-							{this.state.characterNames.map(name => <option key={name}>{name}</option>)}
-						</select>
-						<input type="button" value="Add" onClick={this.addCharacter} />
+						{this.state.ready ?
+							<div>
+								<select onChange={e => this.setState({ selectedCharacter: e.target.value })}>
+									{this.state.characterNames.map(name => <option key={name}>{name}</option>)}
+								</select>
+								<input type="button" value="Add" onClick={this.addCharacter} />
+							</div> :
+							<span className="h6 loading">Loading...</span>
+						}
 					</div>
 					<div>
 						<h4>Weapons</h4>
-						<select onChange={e => this.setState({ selectedWeapon: e.target.value })}>
-							{this.state.weaponNames.map(name => <option key={name}>{name}</option>)}
-						</select>
-						<input type="button" value="Add" onClick={this.addWeapon} />
+						{this.state.ready ?
+							<div>
+								<select onChange={e => this.setState({ selectedWeapon: e.target.value })}>
+									{this.state.weaponNames.map(name => <option key={name}>{name}</option>)}
+								</select>
+								<input type="button" value="Add" onClick={this.addWeapon} />
+							</div> :
+							<span className="h6 loading">Loading...</span>
+						}
 					</div>
 					<div>
 						<h4>Settings</h4>
