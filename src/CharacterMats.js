@@ -22,7 +22,7 @@ export default ({ type, character, showDetails, onBoundsChanged, onDelete }) => 
 		.concat(talentKeys.map(key => character.talents.filter((_, i) => checkBoundsOffset(bounds[key], i))).flat()));
 
 	const renderTotals = () =>
-		<div className={showDetails && 'row'}>
+		<div className={showDetails ? 'row' : undefined}>
 			{showDetails && <h5>Total {type} mats</h5>}
 			<ItemList className="flex wrap" mora={totals.mora}
 				items={[...Object.values(totals).map(sub => Object.values(sub)).flat()]} />
@@ -34,15 +34,18 @@ export default ({ type, character, showDetails, onBoundsChanged, onDelete }) => 
 			<h4>{character.name}</h4>
 			<div className="ascension flex row">
 				<div className="thumb">
-					<img className="char_image"
-						src={WikiApi.file(isCharacter ? `Character_${character.name}_Thumb.png` : `Weapon_${character.name}.png`)}
-						alt={character.name}
-						title={character.name} />
-					<div className="rarity">
-						<img src={WikiApi.file(`Icon_${character.rarity}_Stars.png`)}
-							alt={`${character.rarity}-star ${type}`}
-							title={`${character.rarity}-star ${type}`} />
+					<div className="container">
+						<img className="char_image"
+							src={WikiApi.file(isCharacter ? `Character_${character.name}_Thumb.png` : `Weapon_${character.name}.png`)}
+							alt={character.name}
+							title={character.name} />
+						<div className="rarity">
+							<img src={WikiApi.file(`Icon_${character.rarity}_Stars.png`)}
+								alt={`${character.rarity}-star ${type}`}
+								title={`${character.rarity}-star ${type}`} />
+						</div>
 					</div>
+					<div className="h6">Ascension</div>
 					<div onFocus={() => setFocus('ascension')} onBlur={() => setFocus('')}>
 						<input type="number" value={bounds.ascension.current} onChange={e => {
 							const value = clamp(e.target.value, 0, 6);

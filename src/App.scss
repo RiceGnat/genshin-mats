@@ -126,15 +126,22 @@ img {
 
   .thumb {
     margin-right: 1em;
-  }
 
-  .char_image {
-    width: 106px;
-    height: 106px;
-  }
+    .char_image {
+      width: 106px;
+      height: 106px;
+    }
 
-  .rarity {
-    text-align: center;
+    .rarity {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      bottom: 3px;
+    }
+
+    .h6 {
+      text-align: center;
+    }
   }
 
   input[type=number] {

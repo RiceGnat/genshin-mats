@@ -59,6 +59,8 @@
 
     input[type=number] {
       width: 3em;
+      padding-left: 0.25em;
+      padding-right: 0.25em;
     }
   }
 
@@ -68,7 +70,7 @@
       height: 1.5em;
     }
   }
-  }
+}
   
 @media only screen and (max-width: 36em) {
   .char {
