@@ -90,6 +90,7 @@ img {
   margin-right: 4em;
   margin-bottom: 1.5em;
   width: 34em;
+  transition-property: width;
 
   &.compact {
     width: 24em;
