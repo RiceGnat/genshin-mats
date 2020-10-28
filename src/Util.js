@@ -1,40 +1,38 @@
 export const splitArray = (array, chunkSize) => Array(Math.ceil(array.length / chunkSize)).fill().map((_, index) => index * chunkSize).map(begin => array.slice(begin, begin + chunkSize));
 
-const extractWikiTemplateParams = (wikitext, regex) => {
+const extractWikiTemplateParams = (wikitext, template) => {
     const params = {};
     try {
-        wikitext.match(regex)[1]
-            .split('|')
-            .map(param => param.split('='))
-            .filter(tokens => tokens.length === 2)
-            .forEach(o => params[o[0].trim()] = o[1].trim());
+        [...wikitext.match(new RegExp(`\\{\\{${template}\\s*(.+?)\\}\\}`, 's'))[1]
+            .matchAll(/\|([^|]+?)=(.+?)(?=(?:\|(?:[^|]+?)=)|$)/gs)
+        ].forEach(o => params[o[1].trim()] = o[2].trim());
     } finally {
         return params;
     }
 }
 
 export const parseCharacterDetails = wikitext => {
-    const params = extractWikiTemplateParams(wikitext, /\{\{Character Infobox\s*\|(.+?)\}\}/s);
+    const params = extractWikiTemplateParams(wikitext, 'Character Infobox');
     return {
         rarity: parseInt(params.rarity)
     }
 }
 
 export const parseAscensionMats = wikitext =>
-    extractWikiTemplateParams(wikitext, /\{\{Character Ascension Materials\s*\|(.+?)\}\}/s);
+    extractWikiTemplateParams(wikitext, 'Character Ascension Materials');
 
 export const parseTalentMats = wikitext => 
-    extractWikiTemplateParams(wikitext, /\{\{Talent Leveling Table\s*\|(.+?)\}\}/s);
+    extractWikiTemplateParams(wikitext, 'Talent Leveling Table');
 
 export const parseTalentNames = wikitext => 
-    extractWikiTemplateParams(wikitext, /\{\{Talents Table\s*\|(.+?)\}\}/s);
+    extractWikiTemplateParams(wikitext, 'Talents Table');
 
 export const parseWeaponTable = wikitext => 
     wikitext.replace(/\n/g, '').replace(/\{\|/g, '').replace(/\|\}/g, '').split('|-|').slice(1).map(row => row.split('|').pop());
     
 export const parseWeaponDetails = wikitext => {
-    const params = extractWikiTemplateParams(wikitext, /\{\{Weapon Infobox\s*\|(.+?)\}\}/s);
-    const versionMatches = wikitext.match(/\{\{Version\s*\|(.+?)\}\}/s);
+    const params = extractWikiTemplateParams(wikitext, 'Weapon Infobox');
+    const versionMatches = wikitext.match(/\{\{Version.+?\}\}/s);
 
     return {
         rarity: parseInt(params.rarity),
@@ -43,7 +41,10 @@ export const parseWeaponDetails = wikitext => {
 }
 
 export const parseWeaponMats = wikitext =>
-    extractWikiTemplateParams(wikitext, /\{\{Weapon Ascension Materials\s*\|(.+?)\}\}/s); 
+    extractWikiTemplateParams(wikitext, 'Weapon Ascension Materials'); 
+
+export const parseItemDetails = wikitext =>
+    extractWikiTemplateParams(wikitext, 'Item Infobox'); 
 
 const item = (name, count) => ({ name, count });
 

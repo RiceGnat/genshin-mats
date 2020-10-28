@@ -186,6 +186,29 @@ img {
       text-align: center;
     }
   }
+
+  .popup {
+    position: absolute;
+    border: 0.0625em solid var(--primary-alt);
+    padding: 0.5em;
+    padding-bottom: 1em;
+    background: var(--primary);
+    transform-origin: top;
+    z-index: 1;
+
+    transition: height linear 0s 100ms, transform linear 100ms, opacity linear 100ms;
+  }
+
+  &:hover {
+    background: var(--primary-alt);
+  }
+
+  &:not(:hover) .popup {
+    height: 0;
+    opacity: 0;
+    transform: scaleY(0);
+  }
+
 }
 
 .mora {

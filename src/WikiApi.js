@@ -7,7 +7,8 @@ import {
 	parseTalentNames,
 	parseWeaponTable,
      parseWeaponDetails,
-	parseWeaponMats
+	parseWeaponMats,
+     parseItemDetails
 } from './Util';
 
 const wiki = 'https://genshin-impact.fandom.com';
@@ -59,4 +60,10 @@ export default class {
                ...parseWeaponDetails(wikitext),
                ascensions: parseWeaponMats(wikitext)
           })));
+
+     static getItem = name =>
+          this.getPages([name], (title, wikitext) => ({
+               name: title,
+               ...parseItemDetails(wikitext)
+          })).then(results => results.length > 0 ? results[0] : null);
 }
