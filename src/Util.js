@@ -196,7 +196,7 @@ export const getWeaponAscensionLevels = (data, rarity) => {
                     item(data.ascendMat4, 6),
                     item(data.bossMat3, 27),
                     item(data.commonMat3, 18),
-                    undefined
+                    65000
                 )
             ];
         case 4:
@@ -274,7 +274,7 @@ export const getWeaponAscensionLevels = (data, rarity) => {
                     item(data.ascendMat4, 3),
                     item(data.bossMat3, 12),
                     item(data.commonMat3, 8),
-                    undefined
+                    30000
                 )
             ];
         default: return [];
