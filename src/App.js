@@ -236,7 +236,7 @@ export default class extends Component {
 								this.updateList(list);
 							}} />)}
 				</div>
-				{this.state.list.length > 1 && 
+				{this.state.list.length > 0 && 
 					<div className="total row">
 						<h4>Total mats for all {this.state.list.map(({ type }) => `${type}s`).filter((value, index, self) => self.indexOf(value) === index).sort().join(' and ')}</h4>
 						<div className="flex wrap">
