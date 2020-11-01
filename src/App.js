@@ -54,7 +54,12 @@ export default class extends Component {
 		const characters = await WikiApi.getCharacters();
 		const characterNames = characters.map(({ name }) => name).sort();
 		const weapons = await WikiApi.getWeapons();
-		const weaponNames = weapons.map(({ name }) => name).sort();
+		const weaponNames = weapons.map(({ name }) => name).sort((a, b) => {
+			const _a = a.toLowerCase().startsWith('the') ? a.substr(4) : a;
+			const _b = b.toLowerCase().startsWith('the') ? b.substr(4) : b;
+
+			return _a.localeCompare(_b, 'en', { sensitivity: 'base' });
+		});
 		
 		try {
 			list = JSON.parse(localStorage.getItem('list')) || [];
