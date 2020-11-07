@@ -43,7 +43,7 @@ export default class extends Component {
 		let list, settings;
 		
 		try {
-			settings = JSON.parse(localStorage.getItem('settings')) || {};
+			settings = JSON.parse(localStorage.getItem('settings')) || { ...defaultSettings };
 		}
 		catch {
 			settings = { ...defaultSettings };
@@ -239,6 +239,30 @@ export default class extends Component {
 								const list = this.state.list;
 								list.splice(i, 1);
 								this.updateList(list);
+							}}
+							onDragStart={e => {
+								e.stopPropagation();
+								e.dataTransfer.effectAllowed = 'move';
+								e.dataTransfer.setData('index', i);
+							}}
+							onDragOver={e => {
+								if (e.dataTransfer.types.includes('index')) {
+									e.preventDefault();
+									e.stopPropagation();
+									e.dataTransfer.dropEffect = 'move';
+								}
+							}}
+							onDrop={e => {
+								if (e.dataTransfer.types.includes('index')) {
+									e.preventDefault();
+									e.stopPropagation();
+									const source = e.dataTransfer.getData('index');
+									const list = this.state.list;
+									const item = list[source];
+									list.splice(source, 1);
+									list.splice(i, 0, item);
+									this.updateList(list);
+								}
 							}} />)}
 				</div>
 				{this.state.list.length > 0 && 

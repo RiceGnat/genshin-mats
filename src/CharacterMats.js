@@ -8,7 +8,7 @@ const clamp = (value, min, max) => Math.max(Math.min(value, max), min);
 const talentLabels = ['Attack', 'Skill', 'Burst'];
 const talentKeys = talentLabels.map(str => str.toLowerCase());
 
-export default ({ type, character, showDetails, onBoundsChanged, onDelete }) => {
+export default ({ type, character, showDetails, onBoundsChanged, onDelete, onDragStart, onDragOver, onDrop }) => {
 	const [showTalents, setShowTalents] = useState(false);
 	const [focused, setFocus] = useState('');
 
@@ -29,7 +29,8 @@ export default ({ type, character, showDetails, onBoundsChanged, onDelete }) => 
 		</div>;
 
 	return (
-		<div className={`char container${showDetails ? '' : ' compact'}`}>
+		<div className={`char container${showDetails ? '' : ' compact'}`} draggable="true"
+			onDragStart={onDragStart} onDragOver={onDragOver} onDrop={onDrop}>
 			<input type="button" className="delete-btn" value="&#215;" onClick={() => onDelete()} />
 			<h4>{character.name}</h4>
 			<div className="ascension flex row">

@@ -9,7 +9,7 @@ const getItemDetails = async name => {
         cache[name] = Object.keys(item)
             .filter(key => key.startsWith('source') && item[key])
             .sort()
-            .map(key => item[key].replace(/\[\[(?:.*\|)?([^\[\]]*)\]\]/g, '$1'));
+            .map(key => item[key].replace(/\[\[(?:.*\|)?([^[\]]*)\]\]/g, '$1'));
     } 
 
     return cache[name];
