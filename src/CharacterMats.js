@@ -103,7 +103,7 @@ export default ({ type, character, showDetails, onBoundsChanged, onDelete, onDra
 								<ItemList key={`talent_${i}`}
 									className={`flex${focused !== '' ? (talentKeys.includes(focused) && checkBoundsOffset(bounds[focused], i) ? ' selected' : ' unselected') : ''}`}
 									mora={a.mora}
-									items={[a.talent, a.common, a.weekly]} />)}
+									items={[a.talent, a.common, a.weekly, a.special]} />)}
 							</div>
 						}
 					</fieldset>

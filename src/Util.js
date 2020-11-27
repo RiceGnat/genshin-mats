@@ -97,7 +97,7 @@ export const getAscensionLevels = data => {
 }
 
 export const getTalentLevels = data => {
-    const talent = (talent, common, weekly, mora) => ({ talent, common, weekly, mora });
+    const talent = (talent, common, weekly, mora, special) => ({ talent, common, weekly, mora, special });
     return [
         talent(
             item(data.talentMat1, 3),
@@ -151,7 +151,8 @@ export const getTalentLevels = data => {
             item(data.talentMat3, 16),
             item(data.commonMat3, 12),
             item(data.bossMat, 2),
-            undefined
+            700000,
+            item('Crown of Sagehood', 1)
         )
     ];
 }
@@ -286,7 +287,7 @@ export const checkBounds = ({ current, target }, i) => i >= current && i < targe
 export const checkBoundsOffset = ({ current, target }, i) => checkBounds({ current: current - 1, target: target - 1 }, i);
 
 export const getAscensionTotals = array => {
-    const fields = ['ele1', 'ele2', 'local', 'common', 'boss', 'talent', 'weapon', 'weekly'];
+    const fields = ['ele1', 'ele2', 'local', 'common', 'boss', 'talent', 'weapon', 'weekly', 'special'];
     const totals = { mora: 0 };
     fields.forEach(key => totals[key] = {});
 

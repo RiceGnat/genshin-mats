@@ -167,7 +167,7 @@ export default class extends Component {
 			.flat());
 
 		const overworld = ['local', 'common', 'boss'].map(key => Object.values(totals[key])).flat();
-		const elites = ['ele1', 'ele2', 'weekly'].map(key => Object.values(totals[key])).flat();
+		const bosses = ['ele1', 'ele2', 'weekly', 'special'].map(key => Object.values(totals[key])).flat();
 		const talents = Object.values(totals.talent);
 		const weapons = Object.values(totals.weapon);
 
@@ -275,10 +275,10 @@ export default class extends Component {
 									<ItemList className="flex wrap" mora={totals.mora} items={overworld} />
 								</div>
 							}
-							{elites.length > 0 &&
+							{bosses.length > 0 &&
 								<div className="subtotal">
-									<h5>Elites and weekly bosses</h5>
-									<ItemList className="flex wrap" mora={null} items={elites} />
+									<h5>Bosses and special events</h5>
+									<ItemList className="flex wrap" mora={null} items={bosses} />
 								</div>
 							}
 						</div>
