@@ -25,7 +25,7 @@ export const parseTalentMats = wikitext =>
     extractWikiTemplateParams(wikitext, 'Talent Leveling Table');
 
 export const parseTalentNames = wikitext => 
-    extractWikiTemplateParams(wikitext, 'Talents Table');
+    extractWikiTemplateParams(wikitext, 'Talent Table');
 
 export const parseWeaponTable = wikitext => 
     wikitext.replace(/\n/g, '').replace(/\{\|/g, '').replace(/\|\}/g, '').split('|-|').slice(1).map(row => row.split('|').pop());
