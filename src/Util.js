@@ -12,9 +12,11 @@ const extractWikiTemplateParams = (wikitext, template) => {
 }
 
 export const parseCharacterDetails = wikitext => {
-    const params = extractWikiTemplateParams(wikitext, 'Character Infobox');
+    //const params = extractWikiTemplateParams(wikitext, 'Character Infobox');
+    // temp directly extract rarity until implement better template parsing method
     return {
-        rarity: parseInt(params.rarity)
+        //rarity: parseInt(params.rarity)
+        rarity: parseInt(wikitext.match(/\|\s*rarity\s*=\s*(.+)/)[1])
     }
 }
 
