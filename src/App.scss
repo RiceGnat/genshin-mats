@@ -134,8 +134,11 @@ img {
     }
 
     .rarity {
-      width: 100%;
       text-align: center;
+
+      img {
+        height: 1.25em;
+      }
     }
 
     .h6 {
