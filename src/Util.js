@@ -14,9 +14,10 @@ const extractWikiTemplateParams = (wikitext, template) => {
 export const parseCharacterDetails = wikitext => {
     //const params = extractWikiTemplateParams(wikitext, 'Character Infobox');
     // temp directly extract rarity until implement better template parsing method
+    const match = wikitext.match(/\|\s*rarity\s*=\s*(.+)/);
     return {
         //rarity: parseInt(params.rarity)
-        rarity: parseInt(wikitext.match(/\|\s*rarity\s*=\s*(.+)/)[1])
+        rarity: match ? parseInt(match[1]) : null
     }
 }
 
@@ -34,7 +35,7 @@ export const parseWeaponTable = wikitext =>
     
 export const parseWeaponDetails = wikitext => {
     const params = extractWikiTemplateParams(wikitext, 'Weapon Infobox');
-    const versionMatches = wikitext.match(/\{\{Version.+?\}\}/s);
+    const versionMatches = wikitext.match(/\{\{Change History.+?\}\}/s);
 
     return {
         rarity: parseInt(params.rarity),
@@ -307,8 +308,8 @@ export const getAscensionTotals = array => {
 }
 
 export const getDomainDay = mat => {
-    if (mat.match(/.+Decarabian's.+/) || mat.match(/.+from Guyun/) || mat.match(/.+("Freedom"|"Prosperity")/)) return 'monday/thursday';
-    else if (mat.match(/Boreal Wolf's.+/) || mat.match(/Mist Veiled.+Elixir/) || mat.match(/.+("Resistance"|"Diligence")/)) return 'tuesday/friday';
-    else if (mat.match(/.+Dandelion Gladiator/) || mat.match(/.+of Aerosiderite/) || mat.match(/.+("Ballad"|"Gold")/)) return 'wednesday/saturday';
+    if (mat.match(/.+Decarabian's.+/) || mat.match(/.+from Guyun/) || mat.match(/.+(Freedom|Prosperity)/)) return 'monday/thursday';
+    else if (mat.match(/Boreal Wolf's.+/) || mat.match(/Mist Veiled.+Elixir/) || mat.match(/.+(Resistance|Diligence)/)) return 'tuesday/friday';
+    else if (mat.match(/.+Dandelion Gladiator/) || mat.match(/.+of Aerosiderite/) || mat.match(/.+(Ballad|Gold)/)) return 'wednesday/saturday';
     else return '';
 }

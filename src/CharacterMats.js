@@ -40,7 +40,7 @@ export default ({ type, character, showDetails, onBoundsChanged, onDelete, onDra
 							src={WikiApi.file(isCharacter ? `Character_${character.name}_Thumb.png` : `Weapon_${character.name}.png`)}
 							alt={character.name}
 							title={character.name} />
-						{showDetails &&
+						{showDetails && character.rarity &&
 							<div className="rarity">
 								<img src={WikiApi.file(`Icon_${character.rarity}_Stars.png`)}
 									alt={`${character.rarity}-star ${type}`}
