@@ -125,6 +125,12 @@ img {
     opacity: 1;
   }
 
+  .char_name {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
   .thumb {
     margin-right: 1em;
 

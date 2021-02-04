@@ -32,7 +32,7 @@ export default ({ type, character, showDetails, onBoundsChanged, onDelete, onDra
 		<div className={`char container${showDetails ? '' : ' compact'}`} draggable="true"
 			onDragStart={onDragStart} onDragOver={onDragOver} onDrop={onDrop}>
 			<input type="button" className="delete-btn" value="&#215;" onClick={() => onDelete()} />
-			<h4>{character.name}</h4>
+			<h4 className="char_name">{character.name}</h4>
 			<div className="ascension flex row">
 				<div className="thumb">
 					<div className="container">
