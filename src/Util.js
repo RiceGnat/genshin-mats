@@ -35,11 +35,12 @@ export const parseWeaponTable = wikitext =>
     
 export const parseWeaponDetails = wikitext => {
     const params = extractWikiTemplateParams(wikitext, 'Weapon Infobox');
-    const versionMatches = wikitext.match(/\{\{Change History.+?\}\}/s);
+    const cbtMatches = wikitext.match(/\{\{CBT. Info\}\}/s);
+    const upcomingMatches = wikitext.match(/\{\{Upcoming\}\}/s);
 
     return {
         rarity: parseInt(params.rarity),
-        released: versionMatches !== null      
+        released: cbtMatches === null && upcomingMatches === null
     }
 }
 
