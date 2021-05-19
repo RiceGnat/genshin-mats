@@ -4,7 +4,6 @@ import {
      parseCharacterDetails,
 	parseAscensionMats,
 	parseTalentMats,
-	parseTalentNames,
 	parseWeaponTable,
      parseWeaponDetails,
 	parseWeaponMats,
@@ -34,9 +33,14 @@ export default class {
                name: title,
                ...parseCharacterDetails(wikitext),
                ascensions: parseAscensionMats(wikitext),
-               talents: parseTalentMats(wikitext),
-               talentNames: parseTalentNames(wikitext)
-          })));
+               talents: parseTalentMats(wikitext)
+          })))
+          .then(characters => Promise.all(characters.map(character =>
+               this.getTalentNames(character.name).then(talentNames => ({
+                    ...character,
+                    talentNames
+               }))
+          )));
 
      static getWeapons = () => Promise.all([
                `action=query&list=categorymembers&cmtitle=Category:5-Star_Weapons&cmlimit=max&cmtype=page`,
@@ -66,4 +70,15 @@ export default class {
                name: title,
                ...parseItemDetails(wikitext)
           })).then(results => results.length > 0 ? results[0] : null);
+
+     static getTalentNames = character => Promise.all([
+               `action=expandtemplates&prop=wikitext&text=%7B%7B%23DPL%3A%7Ccategory%3D${character}%20Talents%26Normal%20Attacks%7Cuses%3DTemplate%3ATalent%20Infobox%7Cinclude%3D%7BTalent%20Infobox%7D%3A%25PAGE%25%7Cformat%3D%2C%7Callowcachedresults%3Dtrue%7D%7D`,
+               `action=expandtemplates&prop=wikitext&text=%7B%7B%23DPL%3A%7Ccategory%3D${character}%20Talents%26Elemental%20Skills%7Cuses%3DTemplate%3ATalent%20Infobox%7Cinclude%3D%7BTalent%20Infobox%7D%3A%25PAGE%25%7Cformat%3D%2C%7Callowcachedresults%3Dtrue%7D%7D`,
+               `action=expandtemplates&prop=wikitext&text=%7B%7B%23DPL%3A%7Ccategory%3D${character}%20Talents%26Elemental%20Bursts%7Cuses%3DTemplate%3ATalent%20Infobox%7Cinclude%3D%7BTalent%20Infobox%7D%3A%25PAGE%25%7Cformat%3D%2C%7Callowcachedresults%3Dtrue%7D%7D`,
+          ].map(url => this.get(url).then(data => data.expandtemplates.wikitext)))
+          .then(results => ({
+               attack: results[0],
+               skill: results[1],
+               burst: results[2]
+          }));
 }
